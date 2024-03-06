@@ -1,4 +1,4 @@
-﻿using Library.Application.DTOs;
+﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.Responses;
 using Library.Domain.Entity;
 using System;

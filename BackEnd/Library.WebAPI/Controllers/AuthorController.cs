@@ -1,4 +1,4 @@
-﻿using Library.Application.DTOs;
+﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +29,8 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.EditAuthor(dto);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
-        [HttpDelete]
 
+        [HttpDelete]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             var response = await _authorService.DeleteAuthor(id);

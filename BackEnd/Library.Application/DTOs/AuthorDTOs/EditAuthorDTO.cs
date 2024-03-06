@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Application.DTOs
+namespace Library.Application.DTOs.AuthorDTOs
 {
-    public class AddAuthorDTO
+    public class EditAuthorDTO
     {
+        public int AuthorId { get; set; }
+
         public string FullName { get; set; }
 
         public string Nationality { get; set; }

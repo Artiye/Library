@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Library.Application.DTOs;
+using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-     public class AuthorService : IAuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;

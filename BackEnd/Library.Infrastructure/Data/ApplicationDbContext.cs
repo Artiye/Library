@@ -24,7 +24,8 @@ namespace Library.Infrastructure.Data
 
             modelBuilder.Entity<Book>()
                 .HasMany(l => l.Authors)
-                .WithMany(l => l.Books);
+                .WithMany(l => l.Books)
+                .UsingEntity(j => j.ToTable("AuthorBook"));
                 
             
             base.OnModelCreating(modelBuilder);
