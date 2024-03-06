@@ -1,17 +1,14 @@
 ﻿using Library.Domain.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Domain.Entity
+namespace Library.Application.DTOs.BookDTOs
 {
-    public class Book
+    public class AddBookDTO
     {
-        public int BookId { get; set; }
-
         public string Title { get; set; }
 
         public DateTime PublishingYear { get; set; }
@@ -24,11 +21,10 @@ namespace Library.Domain.Entity
 
         public double Rating { get; set; }
 
-        public GenreTypes  Genre { get; set; }
+        public GenreTypes Genre { get; set; }
 
         public Languages Languages { get; set; }
 
-        public List<Author> Authors { get; set; }
-
+        
     }
 }

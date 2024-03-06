@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Application.DTOs
+namespace Library.Application.DTOs.AuthorDTOs
 {
     public class GetAuthorDTO
     {
