@@ -4,6 +4,8 @@ using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +18,12 @@ namespace Library.Application.Services
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly IBookRepository _bookRepository;
 
-        public AuthorService(IAuthorRepository authorRepository, IMapper mapper) {
+        public AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository) {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ApiResponse> AddAuthor(AddAuthorDTO dto)
@@ -36,7 +40,28 @@ namespace Library.Application.Services
             }
             return new ApiResponse(400, "Failed to add author");
             }
-        
+
+       
+        public async Task<ApiResponse> AddBookToAuthor(int authorId, int bookId)
+        {
+            var author = await _authorRepository.GetAuthorById(authorId);
+
+
+            var book = await _bookRepository.GetBookById(bookId);
+            if(author != null && book != null)
+            {
+                if (author.Books == null)
+                    author.Books = new List<Book>();
+
+                author.Books.Add(book);
+                await _authorRepository.EditAuthor(author);
+                return new ApiResponse(200, "Added book to author");
+
+            }
+            return new ApiResponse(400, "Failed book to author");
+
+
+        }
 
         public async Task<ApiResponse> DeleteAuthor(int id)
         {
@@ -101,6 +126,25 @@ namespace Library.Application.Services
             var books = await _authorRepository.GetBooksByAuthorId(authorId);
             return books;
 
+        }
+
+        public  async Task<ApiResponse> RemoveBookFromAuthor(int authorId, int bookId)
+        {
+            var author = await _authorRepository.GetAuthorById(authorId);
+
+
+            var book = await _bookRepository.GetBookById(bookId);
+            if (author != null && book != null)
+            {
+                if (author.Books == null)
+                    author.Books = new List<Book>();
+
+                author.Books.Remove(book);
+                await _authorRepository.EditAuthor(author);
+                return new ApiResponse(200, "Removed book from author");
+
+            }
+            return new ApiResponse(400, "Failed  to remove book from author");
         }
     }
 }

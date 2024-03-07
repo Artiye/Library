@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
+using Library.Application.DTOs.BookDTOs;
 using Library.Application.RepositoryInterfaces;
 using Library.Domain.Entity;
 using Library.Infrastructure.Data;
@@ -45,34 +46,31 @@ namespace Library.Infrastructure.Repository
 
         public async Task<List<Book>> GetAllBooks()
         {
-            var bookList = await _context.Books.ToListAsync();
+            var bookList = await _context.Books.Include(b => b.Authors).ToListAsync();
             return bookList;
         }
 
-        public async Task<List<GetAuthorDTO>> GetAuthorsOfBook(int bookId)
+        public async Task<List<Author>> GetAuthorOfBook(int bookId)
         {
+           
+
             var book = await _context.Books
-                 .Include(b => b.Authors)
-                 .FirstOrDefaultAsync(b => b.BookId == bookId);
+                .Include(b => b.Authors)
+                .FirstOrDefaultAsync(b => b.BookId == bookId);
 
-            if (book != null)
-            {
-                var authorDTOs = _mapper.Map<List<GetAuthorDTO>>(book.Authors.ToList());
-                return authorDTOs;
-            }
-
-            return new List<GetAuthorDTO>();
+            return book.Authors;
+           
         }
 
         public async Task<Book> GetBookById(int id)
         {
-            var bookById = await _context.Books.FirstOrDefaultAsync(b => b.BookId == id);
+            var bookById = await _context.Books.Include(b => b.Authors).FirstOrDefaultAsync(b => b.BookId == id);
             return bookById;
         }
 
         public async Task<Book> GetBookByTitle(string title)
         {
-            var bookByTitle = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
+            var bookByTitle = await _context.Books.Include(b => b.Authors).FirstOrDefaultAsync(a => a.Title == title);
             return bookByTitle;
         }
 

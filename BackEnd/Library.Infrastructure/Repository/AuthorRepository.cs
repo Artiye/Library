@@ -13,10 +13,12 @@ namespace Library.Infrastructure.Repository
     public class AuthorRepository : IAuthorRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBookRepository _bookRepository;
 
-        public AuthorRepository(ApplicationDbContext context)
+        public AuthorRepository(ApplicationDbContext context, IBookRepository bookRepository)
         {
             _context = context;
+            _bookRepository = bookRepository;
         }
         public async Task<Author> AddAuthor(Author author)
         {
@@ -24,6 +26,8 @@ namespace Library.Infrastructure.Repository
             await _context.SaveChangesAsync();
             return author;
         }
+       
+
 
         public async Task<Author> DeleteAuthor(Author author)
         {

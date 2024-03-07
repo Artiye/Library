@@ -24,5 +24,9 @@ namespace Library.Application.Services.Interfaces
         Task<List<GetAuthorDTO>> GetAllAuthors();
 
         Task<List<Book>> GetBooksByAuthorId(int authorId);
+     
+        Task<ApiResponse> AddBookToAuthor(int authorId, int bookId);
+
+        Task<ApiResponse> RemoveBookFromAuthor(int authorId, int bookId);
     }
 }

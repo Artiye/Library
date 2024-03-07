@@ -23,12 +23,25 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.AddAuthor(dto);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
+        [HttpPost("AddAuthorToBook")]
+        public async Task<IActionResult> AddBooksToAuthor( int authorId,  int bookId)
+        {
+            var response = await _authorService.AddBookToAuthor(authorId, bookId);
+            return Ok(response);
+        }
+        [HttpPut("RemoveBookFromAuthor")]
+        public async Task<IActionResult> RemoveBookFromAuthor(int authorId, int bookId)
+        {
+            var response = await _authorService.RemoveBookFromAuthor(authorId, bookId);
+            return Ok(response);
+        }
         [HttpPut]
         public async Task<IActionResult> EditAuthor([FromBody] EditAuthorDTO dto)
         {
             var response = await _authorService.EditAuthor(dto);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
+        
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAuthor(int id)
@@ -36,6 +49,8 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.DeleteAuthor(id);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
+        
+
         [HttpGet("{authorId}")]
 
         public async Task<IActionResult> GetAuthorById(int authorId)

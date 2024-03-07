@@ -10,6 +10,7 @@ namespace Library.Application.RepositoryInterfaces
     public interface IAuthorRepository
     {
         Task<Author> AddAuthor(Author author);
+       
 
         Task<Author> EditAuthor(Author author);
 
@@ -23,6 +24,7 @@ namespace Library.Application.RepositoryInterfaces
 
         Task<List<Book>> GetBooksByAuthorId(int authorId);
 
+       
 
 
     }

@@ -19,15 +19,15 @@ namespace Library.Infrastructure.Data
 
             public DbSet<Book> Books {  get; set; }
 
+            
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             modelBuilder.Entity<Book>()
-                .HasMany(l => l.Authors)
-                .WithMany(l => l.Books)
-                .UsingEntity(j => j.ToTable("AuthorBook"));
-                
-            
+               .HasMany(l => l.Authors)
+               .WithMany(l => l.Books);
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
