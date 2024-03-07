@@ -111,8 +111,9 @@ namespace Library.Application.Services
 
         public async Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId)
         {
-           var authors = await _bookRepository.GetAuthorOfBook(bookId);
-           var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(authors);
+           var book = await _bookRepository.GetBookById(bookId);
+
+           var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(book.Authors);
            return authorDTO;
         }
 

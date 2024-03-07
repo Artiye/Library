@@ -23,6 +23,6 @@ namespace Library.Application.RepositoryInterfaces
 
         Task<List<Book>> GetAllBooks();
 
-        Task<List<Author>> GetAuthorOfBook(int bookId);
+        
     }
 }

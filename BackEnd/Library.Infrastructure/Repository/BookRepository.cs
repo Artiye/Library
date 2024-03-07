@@ -50,17 +50,7 @@ namespace Library.Infrastructure.Repository
             return bookList;
         }
 
-        public async Task<List<Author>> GetAuthorOfBook(int bookId)
-        {
-           
-
-            var book = await _context.Books
-                .Include(b => b.Authors)
-                .FirstOrDefaultAsync(b => b.BookId == bookId);
-
-            return book.Authors;
-           
-        }
+        
 
         public async Task<Book> GetBookById(int id)
         {
