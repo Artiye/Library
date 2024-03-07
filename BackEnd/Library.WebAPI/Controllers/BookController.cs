@@ -22,6 +22,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.AddBook(dto);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
+        
         [HttpPut]
 
         public async Task<IActionResult> EditBook(EditBookDTO dto)
@@ -55,12 +56,13 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.GetBooks();
             return Ok(result);
         }
-        [HttpGet("{bookId}/authors")]
-
-        public async Task<IActionResult> GetAuthorsOfBook(int bookId)
+        [HttpGet("author/{bookId}")]
+        public async Task<IActionResult> GetAuthorOfABook(int bookId)
         {
-            var result = await _bookService.GetAuthorsOfABook(bookId);
+            var result = await _bookService.GetAuthorOfABook(bookId);
             return Ok(result);
         }
-    }
+
+
+        }
 }

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Library.Application.DTOs.BookDTOs
 {
-    public class AddBookDTO
+    public class GetOnlyBookDTO
     {
+        public int BookId { get; set; }
+
         public string Title { get; set; }
 
         public DateTime PublishingYear { get; set; }
@@ -24,9 +26,5 @@ namespace Library.Application.DTOs.BookDTOs
         public GenreTypes Genre { get; set; }
 
         public Languages Languages { get; set; }
-
-        public List<int> AuthorIds { get; set; }
-
-
     }
 }

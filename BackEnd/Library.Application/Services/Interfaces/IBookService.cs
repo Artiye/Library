@@ -1,6 +1,7 @@
 ﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.Responses;
+using Library.Domain.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,6 @@ namespace Library.Application.Services.Interfaces
 
         Task<List<GetBookDTO>> GetBooks();
 
-        Task<List<GetAuthorDTO>> GetAuthorsOfABook(int bookId);
+        Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId);
     }
 }

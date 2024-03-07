@@ -17,10 +17,12 @@ namespace Library.Infrastructure.MappingProfiles
             CreateMap<Author, AddAuthorDTO>().ReverseMap();
             CreateMap<Author, EditAuthorDTO>().ReverseMap();
             CreateMap<Author, GetAuthorDTO>().ReverseMap(); 
-            
+            CreateMap<Author,GetOnlyAuthorDTO>().ReverseMap();
+
             CreateMap<Book, AddBookDTO>().ReverseMap();
             CreateMap<Book, EditBookDTO>().ReverseMap();
             CreateMap<Book, GetBookDTO>().ReverseMap();
+            CreateMap<Book, GetOnlyBookDTO>().ReverseMap(); 
         }
     }
 }

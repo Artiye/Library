@@ -1,4 +1,5 @@
-﻿using Library.Domain.Entity;
+﻿using Library.Application.DTOs.AuthorDTOs;
+using Library.Domain.Entity;
 using Library.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Library.Application.DTOs.BookDTOs
 
         public Languages Languages { get; set; }
 
-        public List<Author> Authors { get; set; }
+        public List<GetOnlyAuthorDTO> Authors { get; set; }
 
     }
 }

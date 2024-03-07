@@ -1,4 +1,5 @@
-﻿using Library.Domain.Entity;
+﻿using Library.Application.DTOs.BookDTOs;
+using Library.Domain.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,6 @@ namespace Library.Application.DTOs.AuthorDTOs
 
         public DateTime? DateOfDeath { get; set; }
 
-        public List<Book> Books { get; set; }
+        public List<GetOnlyBookDTO> Books { get; set; }
     }
 }

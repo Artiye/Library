@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Domain.Entity
+namespace Library.Application.DTOs.AuthorDTOs
 {
-    public class Author
+    public class GetOnlyAuthorDTO
     {
         public int AuthorId { get; set; }
 
@@ -21,8 +21,5 @@ namespace Library.Domain.Entity
         public DateTime DateOfBirth { get; set; }
 
         public DateTime? DateOfDeath { get; set; }
-
-        public List<Book> Books { get; set; }
-
     }
 }

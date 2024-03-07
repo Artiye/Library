@@ -5,6 +5,7 @@ using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,26 +18,61 @@ namespace Library.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthorRepository _authorRepository;
 
-        public BookService(IBookRepository bookRepository, IMapper mapper)
+        public BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+            _authorRepository = authorRepository;
         }
+       
         public async Task<ApiResponse> AddBook(AddBookDTO dto)
         {
             if (dto != null)
             {
-                if (string.IsNullOrEmpty(dto.Title) && string.IsNullOrEmpty(dto.Description) && string.IsNullOrEmpty(dto.CoverImage))
-                    return new ApiResponse(400, "Don't leave inputs blank");
+                if (string.IsNullOrEmpty(dto.Title) || string.IsNullOrEmpty(dto.Description) || string.IsNullOrEmpty(dto.CoverImage))
+                {
+                    return new ApiResponse(400, "Title, Description, and CoverImage are required");
+                }
 
-                var book = _mapper.Map<Book>(dto);
+                try
+                {
+                   
+                    var book = _mapper.Map<Book>(dto);
 
-                await _bookRepository.AddBook(book);
-                return new ApiResponse(200, "Added book successfully");
+                    
+                    if (book.Authors == null)
+                    {
+                        book.Authors = new List<Author>();
+                    }
+
+                    foreach (var authorId in dto.AuthorIds)
+                    {
+                       
+                        var author = await _authorRepository.GetAuthorById(authorId);
+                        if (author == null)
+                        {
+                            return new ApiResponse(404, $"Author with ID {authorId} not found");
+                        }
+
+                      
+                        book.Authors.Add(author);
+                    }
+
+                   
+                    await _bookRepository.AddBook(book);
+                    return new ApiResponse(200, "Added book successfully");
+                }
+                catch (Exception ex)
+                {
+                    return new ApiResponse(500, $"Failed to add book: {ex.Message}");
+                }
             }
+
             return new ApiResponse(400, "Failed to add book");
         }
+
 
         public async Task<ApiResponse> DeleteBook(int id)
         {
@@ -73,10 +109,10 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to edit");
         }
 
-        public async Task<List<GetAuthorDTO>> GetAuthorsOfABook(int bookId)
+        public async Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId)
         {
-           var authors = await _bookRepository.GetAuthorsOfBook(bookId);
-           var authorDTO = _mapper.Map<List<GetAuthorDTO>>(authors);
+           var authors = await _bookRepository.GetAuthorOfBook(bookId);
+           var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(authors);
            return authorDTO;
         }
 
