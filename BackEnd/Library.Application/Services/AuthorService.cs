@@ -132,7 +132,6 @@ namespace Library.Application.Services
         {
             var author = await _authorRepository.GetAuthorById(authorId);
 
-
             var book = await _bookRepository.GetBookById(bookId);
             if (author != null && book != null)
             {
