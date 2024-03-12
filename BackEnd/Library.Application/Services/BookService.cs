@@ -9,24 +9,18 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookService : IBookService
+    public class BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository) : IBookService
     {
-        private readonly IBookRepository _bookRepository;
-        private readonly IMapper _mapper;
-        private readonly IAuthorRepository _authorRepository;
+        private readonly IBookRepository _bookRepository = bookRepository;
+        private readonly IMapper _mapper = mapper;
+        private readonly IAuthorRepository _authorRepository = authorRepository;
 
-        public BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository)
-        {
-            _bookRepository = bookRepository;
-            _mapper = mapper;
-            _authorRepository = authorRepository;
-        }
-       
         public async Task<ApiResponse> AddBook(AddBookDTO dto)
         {
             if (dto != null)
@@ -35,32 +29,21 @@ namespace Library.Application.Services
                 {
                     return new ApiResponse(400, "Title, Description, and CoverImage are required");
                 }
-
                 try
                 {
-                   
                     var book = _mapper.Map<Book>(dto);
-
-                    
-                    if (book.Authors == null)
-                    {
-                        book.Authors = new List<Author>();
-                    }
+                    book.Authors ??= [];
 
                     foreach (var authorId in dto.AuthorIds)
                     {
-                       
                         var author = await _authorRepository.GetAuthorById(authorId);
                         if (author == null)
                         {
                             return new ApiResponse(404, $"Author with ID {authorId} not found");
                         }
-
-                      
                         book.Authors.Add(author);
                     }
 
-                   
                     await _bookRepository.AddBook(book);
                     return new ApiResponse(200, "Added book successfully");
                 }
@@ -77,7 +60,7 @@ namespace Library.Application.Services
         public async Task<ApiResponse> DeleteBook(int id)
         {
             var book = await _bookRepository.GetBookById(id);
-            if(book != null)
+            if (book != null)
             {
                 await _bookRepository.DeleteBook(book);
                 return new ApiResponse(200, "Deleted Book");
@@ -89,7 +72,7 @@ namespace Library.Application.Services
         {
             var book = await _bookRepository.GetBookById(dto.BookId);
 
-            if(book != null)
+            if (book != null)
             {
                 if (book.Title == dto.Title &&
                     book.Description == dto.Description &&
@@ -111,25 +94,42 @@ namespace Library.Application.Services
 
         public async Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId)
         {
-           var book = await _bookRepository.GetBookById(bookId);
-
-           var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(book.Authors);
-           return authorDTO;
-        }
+            if (bookId == 0)
+            {
+                throw new Exception("book id cannot be 0");
+            }
+                var book = await _bookRepository.GetBookById(bookId) ?? throw new Exception($"Author with that book id {bookId} does not exist");
+                var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(book.Authors);
+                return authorDTO;                
+         }
+            
+        
 
         public async Task<GetBookDTO> GetBookById(int id)
         {
-            var book = await _bookRepository.GetBookById(id);
-            var bookDTO = _mapper.Map<GetBookDTO>(book);
-            return bookDTO;
+            if (id == 0)
+            {
+                throw new Exception("id cannot be 0");
+            }
+                var book = await _bookRepository.GetBookById(id) ?? throw new Exception($"Book with that id {id} does not exist");
+                var bookDTO = _mapper.Map<GetBookDTO>(book);
+                return bookDTO ?? throw new Exception($"Book with that id {id} does not exist");                
         }
+           
+        
 
         public async Task<GetBookDTO> GetBookByTitle(string title)
         {
-            var book = await _bookRepository.GetBookByTitle(title);
+            if (title == null)
+            {
+                throw new Exception("Title cannot be null");
+            }
+            var book = await _bookRepository.GetBookByTitle(title) ?? throw new Exception($"Book with that title {title} does not exist");
             var bookDTO = _mapper.Map<GetBookDTO>(book);
-            return bookDTO;
-        }
+            return bookDTO;               
+         }          
+        
+
 
         public async Task<List<GetBookDTO>> GetBooks()
         {

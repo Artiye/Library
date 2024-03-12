@@ -14,17 +14,11 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class AuthorService : IAuthorService
+    public class AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository) : IAuthorService
     {
-        private readonly IAuthorRepository _authorRepository;
-        private readonly IMapper _mapper;
-        private readonly IBookRepository _bookRepository;
-
-        public AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository) {
-            _authorRepository = authorRepository;
-            _mapper = mapper;
-            _bookRepository = bookRepository;
-        }
+        private readonly IAuthorRepository _authorRepository = authorRepository;
+        private readonly IMapper _mapper = mapper;
+        private readonly IBookRepository _bookRepository = bookRepository;
 
         public async Task<ApiResponse> AddAuthor(AddAuthorDTO dto)
         {
@@ -50,8 +44,7 @@ namespace Library.Application.Services
             var book = await _bookRepository.GetBookById(bookId);
             if(author != null && book != null)
             {
-                if (author.Books == null)
-                    author.Books = new List<Book>();
+                author.Books ??= [];
 
                 author.Books.Add(book);
                 await _authorRepository.EditAuthor(author);
@@ -109,24 +102,38 @@ namespace Library.Application.Services
 
         public async Task<GetAuthorDTO> GetAuthorById(int id)
         {
-            var author = await _authorRepository.GetAuthorById(id);
+            if (id == 0)
+            {
+                throw new Exception("Author id cannot be 0");
+            }
+
+            var author = await _authorRepository.GetAuthorById(id) ?? throw new Exception($"Author with id {id} does not exist");
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
             return authorDTO;
         }
 
         public async Task<GetAuthorDTO> GetAuthorByName(string name)
         {
-            var author = await _authorRepository.GetAuthorByName(name);
+            if (name == null)
+            {
+                throw new Exception("Name cannot be null");
+            }
+            var author = await _authorRepository.GetAuthorByName(name) ?? throw new Exception($"Author with that name {name} does not exist");
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
-            return authorDTO;
+            return authorDTO;                          
         }
 
         public async Task<List<Book>> GetBooksByAuthorId(int authorId)
         {
-            var books = await _authorRepository.GetBooksByAuthorId(authorId);
+            if (authorId == 0)
+            {
+                throw new Exception("Author id cannot be 0");
+            }
+            var books = await _authorRepository.GetBooksByAuthorId(authorId) ?? throw new Exception($"Author with id {authorId} does not exist");
             return books;
-
-        }
+            }
+           
+        
 
         public  async Task<ApiResponse> RemoveBookFromAuthor(int authorId, int bookId)
         {
@@ -135,8 +142,7 @@ namespace Library.Application.Services
             var book = await _bookRepository.GetBookById(bookId);
             if (author != null && book != null)
             {
-                if (author.Books == null)
-                    author.Books = new List<Book>();
+                author.Books ??= [];
 
                 author.Books.Remove(book);
                 await _authorRepository.EditAuthor(author);
