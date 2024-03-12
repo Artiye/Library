@@ -13,16 +13,10 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repository
 {
-    public class BookRepository : IBookRepository
+    public class BookRepository(ApplicationDbContext context) : IBookRepository
     {
-        private readonly ApplicationDbContext _context;
-        
+        private readonly ApplicationDbContext _context = context;
 
-        public BookRepository(ApplicationDbContext context)
-        {
-            _context = context;
-            
-        }
         public async Task<Book> AddBook(Book book)
         {
             await _context.Books.AddAsync(book);

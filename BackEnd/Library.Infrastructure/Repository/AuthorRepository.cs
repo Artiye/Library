@@ -10,16 +10,10 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repository
 {
-    public class AuthorRepository : IAuthorRepository
+    public class AuthorRepository(ApplicationDbContext context) : IAuthorRepository
     {
-        private readonly ApplicationDbContext _context;
-     
+        private readonly ApplicationDbContext _context = context;
 
-        public AuthorRepository(ApplicationDbContext context)
-        {
-            _context = context;
-           
-        }
         public async Task<Author> AddAuthor(Author author)
         {
             await _context.Authors.AddAsync(author);
@@ -70,7 +64,7 @@ namespace Library.Infrastructure.Repository
             if (author != null)
                 return author.Books.ToList();
 
-            return new List<Book>();
+            return [];
         }
     }
 }

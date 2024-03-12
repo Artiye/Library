@@ -10,14 +10,10 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repository
 {
-    public class BookClubRepository : IBookClubRepository
+    public class BookClubRepository(ApplicationDbContext context) : IBookClubRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context = context;
 
-        public BookClubRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
         public async Task<BookClub> AddBookClub(BookClub bookClub)
         {
             await _context.Clubs.AddAsync(bookClub);
