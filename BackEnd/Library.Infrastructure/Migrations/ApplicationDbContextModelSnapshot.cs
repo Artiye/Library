@@ -37,6 +37,36 @@ namespace Library.Infrastructure.Migrations
                     b.ToTable("AuthorBook");
                 });
 
+            modelBuilder.Entity("AuthorBookClub", b =>
+                {
+                    b.Property<int>("AuthorsAuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClubsBookClubId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorsAuthorId", "ClubsBookClubId");
+
+                    b.HasIndex("ClubsBookClubId");
+
+                    b.ToTable("AuthorBookClub");
+                });
+
+            modelBuilder.Entity("BookBookClub", b =>
+                {
+                    b.Property<int>("BooksBookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClubsBookClubId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BooksBookId", "ClubsBookClubId");
+
+                    b.HasIndex("ClubsBookClubId");
+
+                    b.ToTable("BookBookClub");
+                });
+
             modelBuilder.Entity("Library.Domain.Entity.Author", b =>
                 {
                     b.Property<int>("AuthorId")
@@ -112,6 +142,33 @@ namespace Library.Infrastructure.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("Library.Domain.Entity.BookClub", b =>
+                {
+                    b.Property<int>("BookClubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookClubId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Genre")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Languages")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BookClubId");
+
+                    b.ToTable("Clubs");
+                });
+
             modelBuilder.Entity("AuthorBook", b =>
                 {
                     b.HasOne("Library.Domain.Entity.Author", null)
@@ -123,6 +180,36 @@ namespace Library.Infrastructure.Migrations
                     b.HasOne("Library.Domain.Entity.Book", null)
                         .WithMany()
                         .HasForeignKey("BooksBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AuthorBookClub", b =>
+                {
+                    b.HasOne("Library.Domain.Entity.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Library.Domain.Entity.BookClub", null)
+                        .WithMany()
+                        .HasForeignKey("ClubsBookClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookBookClub", b =>
+                {
+                    b.HasOne("Library.Domain.Entity.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Library.Domain.Entity.BookClub", null)
+                        .WithMany()
+                        .HasForeignKey("ClubsBookClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

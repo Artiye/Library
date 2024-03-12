@@ -16,12 +16,12 @@ namespace Library.Infrastructure.Repository
     public class BookRepository : IBookRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
+        
 
-        public BookRepository(ApplicationDbContext context, IMapper mapper)
+        public BookRepository(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
+            
         }
         public async Task<Book> AddBook(Book book)
         {

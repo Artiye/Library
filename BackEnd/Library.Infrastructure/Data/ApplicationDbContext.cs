@@ -19,6 +19,8 @@ namespace Library.Infrastructure.Data
 
             public DbSet<Book> Books {  get; set; }
 
+            public DbSet<BookClub> Clubs { get; set; }
+
             
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,6 +29,14 @@ namespace Library.Infrastructure.Data
             modelBuilder.Entity<Book>()
                .HasMany(l => l.Authors)
                .WithMany(l => l.Books);
+
+            modelBuilder.Entity<BookClub>()
+                .HasMany(a => a.Authors)
+                .WithMany(a => a.Clubs);
+
+            modelBuilder.Entity<BookClub>()
+                .HasMany(b => b.Books)
+                .WithMany(b => b.Clubs);
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

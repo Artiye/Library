@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb6 : Migration
+    public partial class AddToDb8 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,22 @@ namespace Library.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Clubs",
+                columns: table => new
+                {
+                    BookClubId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Genre = table.Column<int>(type: "int", nullable: false),
+                    Languages = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clubs", x => x.BookClubId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AuthorBook",
                 columns: table => new
                 {
@@ -73,10 +89,68 @@ namespace Library.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AuthorBookClub",
+                columns: table => new
+                {
+                    AuthorsAuthorId = table.Column<int>(type: "int", nullable: false),
+                    ClubsBookClubId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorBookClub", x => new { x.AuthorsAuthorId, x.ClubsBookClubId });
+                    table.ForeignKey(
+                        name: "FK_AuthorBookClub_Authors_AuthorsAuthorId",
+                        column: x => x.AuthorsAuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "AuthorId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorBookClub_Clubs_ClubsBookClubId",
+                        column: x => x.ClubsBookClubId,
+                        principalTable: "Clubs",
+                        principalColumn: "BookClubId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BookBookClub",
+                columns: table => new
+                {
+                    BooksBookId = table.Column<int>(type: "int", nullable: false),
+                    ClubsBookClubId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookBookClub", x => new { x.BooksBookId, x.ClubsBookClubId });
+                    table.ForeignKey(
+                        name: "FK_BookBookClub_Books_BooksBookId",
+                        column: x => x.BooksBookId,
+                        principalTable: "Books",
+                        principalColumn: "BookId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookBookClub_Clubs_ClubsBookClubId",
+                        column: x => x.ClubsBookClubId,
+                        principalTable: "Clubs",
+                        principalColumn: "BookClubId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AuthorBook_BooksBookId",
                 table: "AuthorBook",
                 column: "BooksBookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorBookClub_ClubsBookClubId",
+                table: "AuthorBookClub",
+                column: "ClubsBookClubId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BookBookClub_ClubsBookClubId",
+                table: "BookBookClub",
+                column: "ClubsBookClubId");
         }
 
         /// <inheritdoc />
@@ -86,10 +160,19 @@ namespace Library.Infrastructure.Migrations
                 name: "AuthorBook");
 
             migrationBuilder.DropTable(
+                name: "AuthorBookClub");
+
+            migrationBuilder.DropTable(
+                name: "BookBookClub");
+
+            migrationBuilder.DropTable(
                 name: "Authors");
 
             migrationBuilder.DropTable(
                 name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "Clubs");
         }
     }
 }

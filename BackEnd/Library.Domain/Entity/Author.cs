@@ -24,5 +24,7 @@ namespace Library.Domain.Entity
 
         public List<Book> Books { get; set; }
 
+        public List<BookClub> Clubs { get; set; }
+
     }
 }
