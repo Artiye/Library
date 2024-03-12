@@ -13,12 +13,12 @@ namespace Library.Infrastructure.Repository
     public class AuthorRepository : IAuthorRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly IBookRepository _bookRepository;
+     
 
-        public AuthorRepository(ApplicationDbContext context, IBookRepository bookRepository)
+        public AuthorRepository(ApplicationDbContext context)
         {
             _context = context;
-            _bookRepository = bookRepository;
+           
         }
         public async Task<Author> AddAuthor(Author author)
         {
@@ -50,9 +50,9 @@ namespace Library.Infrastructure.Repository
         }
 
         public async Task<Author> GetAuthorById(int id)
-        {
+        {           
             var author = await _context.Authors.FirstOrDefaultAsync(i => i.AuthorId == id);
-            return author;
+            return author;              
         }
 
         public async Task<Author> GetAuthorByName(string name)

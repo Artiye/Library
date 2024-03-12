@@ -21,5 +21,7 @@ namespace Library.Application.DTOs.AuthorDTOs
         public DateTime? DateOfDeath { get; set; }
 
         public List<int> BookIds { get; set; }
+
+
     }
 }

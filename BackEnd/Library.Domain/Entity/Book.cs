@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Library.Domain.Entity
@@ -24,11 +25,14 @@ namespace Library.Domain.Entity
 
         public double Rating { get; set; }
 
+        
         public GenreTypes  Genre { get; set; }
-
+     
         public Languages Languages { get; set; }
 
         public List<Author> Authors { get; set; }
+
+        public List<BookClub> Clubs { get; set; }
 
     }
 }
