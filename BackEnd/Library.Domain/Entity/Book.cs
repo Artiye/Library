@@ -24,10 +24,9 @@ namespace Library.Domain.Entity
         public string CoverImage { get; set; }
 
         public double Rating { get; set; }
-
         
         public GenreTypes  Genre { get; set; }
-     
+
         public Languages Languages { get; set; }
 
         public List<Author> Authors { get; set; }

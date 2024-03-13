@@ -39,19 +39,19 @@ namespace Library.Infrastructure.Repository
 
         public async Task<List<Author>> GetAllAuthorList()
         {
-            var authorList = await _context.Authors.ToListAsync();
+            var authorList = await _context.Authors.Include(a => a.Books).ToListAsync();
             return authorList;
         }
 
         public async Task<Author> GetAuthorById(int id)
         {           
-            var author = await _context.Authors.FirstOrDefaultAsync(i => i.AuthorId == id);
+            var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(i => i.AuthorId == id);
             return author;              
         }
 
         public async Task<Author> GetAuthorByName(string name)
         {
-            var author = await _context.Authors.FirstOrDefaultAsync(s => s.FullName == name);
+            var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(s => s.FullName == name);
             return author;
         }
 

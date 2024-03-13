@@ -21,5 +21,13 @@ namespace Library.Application.Services.Interfaces
         Task<GetBookClubDTO> GetBookClubByName(string name);
 
         Task<List<GetBookClubDTO>> GetBookClubs();
+
+        Task<ApiResponse> AddBookToBookClub(int bookClubId, int bookId);
+
+        Task<ApiResponse> AddAuthorToBookClub(int bookClubId, int authorId);
+
+        Task<ApiResponse> RemoveBookFromBookClub(int bookClubId, int bookId);
+
+        Task<ApiResponse> RemoveAuthorFromBookClub(int bookClubId, int authorId);
     }
 }

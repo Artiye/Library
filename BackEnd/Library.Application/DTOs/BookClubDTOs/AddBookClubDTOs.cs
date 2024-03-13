@@ -17,8 +17,6 @@ namespace Library.Application.DTOs.BookClubDTOs
 
         public Languages Languages { get; set; }
 
-        public List<int> AuthorIds { get; set; }
-
-        public List<int> BookIds { get; set; }
+       
     }
 }

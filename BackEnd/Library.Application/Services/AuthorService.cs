@@ -44,7 +44,7 @@ namespace Library.Application.Services
             var book = await _bookRepository.GetBookById(bookId);
             if(author != null && book != null)
             {
-                author.Books ??= [];
+                author.Books ??= new List<Book>();
 
                 author.Books.Add(book);
                 await _authorRepository.EditAuthor(author);
@@ -142,7 +142,7 @@ namespace Library.Application.Services
             var book = await _bookRepository.GetBookById(bookId);
             if (author != null && book != null)
             {
-                author.Books ??= [];
+                author.Books ??= new List<Book>();
 
                 author.Books.Remove(book);
                 await _authorRepository.EditAuthor(author);

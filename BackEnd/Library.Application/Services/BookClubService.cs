@@ -19,54 +19,48 @@ namespace Library.Application.Services
         private readonly IAuthorRepository _authorRepository = authorRepository;
         private readonly IBookRepository _bookRepository = bookRepository;
 
+        public async Task<ApiResponse> AddAuthorToBookClub(int bookClubId, int authorId)
+        {
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            var author = await _authorRepository.GetAuthorById(authorId);
+            if (bookClub != null && author != null)
+            {
+                bookClub.Authors ??= new List<Author>();
+
+                bookClub.Authors.Add(author);
+                await _bookClubRepository.EditBookClub(bookClub);
+                return new ApiResponse(200, "Added author to bookclub");
+            }
+            return new ApiResponse(400, "Failed to add author to bookclub");
+        }
+
         public async Task<ApiResponse> AddBookClub(AddBookClubDTOs dto)
         {
             if (dto != null)
             {
                 if (string.IsNullOrEmpty(dto.Description) && string.IsNullOrEmpty(dto.Name))
                     return new ApiResponse(400, "Do not leave inputs empty");
-
-                try
-                {
                     var bookClub = _mapper.Map<BookClub>(dto);
-
-                    bookClub.Authors ??= [];
-
-                    bookClub.Books ??= [];
-
-                    foreach (var authorId in dto.AuthorIds)
-                    {
-                        var author = await _authorRepository.GetAuthorById(authorId);
-                        if (author == null)
-
-                            return new ApiResponse(404, $"Author with ID {authorId} not found");
-
-
-
-                        bookClub.Authors.Add(author);
-                    }
-
-                    foreach (var bookId in dto.BookIds)
-                    {
-                        var book = await _bookRepository.GetBookById(bookId);
-                        if (book == null)
-                            return new ApiResponse(404, $"Book with ID {bookId} not found");
-
-                        bookClub.Books.Add(book);
-                    }
-
                     await _bookClubRepository.AddBookClub(bookClub);
                     return new ApiResponse(200, "Added bookClub successfully");
-
                 }
-                catch (Exception ex)
-                {
-                    return new ApiResponse(500, $"Failed to add book club:  {ex.Message} ");
-                }
-
-
-            }
+                          
             return new ApiResponse(400, "Failed to add book");
+        }
+
+        public async Task<ApiResponse> AddBookToBookClub(int bookClubId, int bookId)
+        {
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            var book = await _bookRepository.GetBookById(bookId);
+
+            if (bookClub != null && book != null)
+            {
+                bookClub.Books ??= new List<Book>();
+                bookClub.Books.Add(book);
+                await _bookClubRepository.EditBookClub(bookClub);
+                return new ApiResponse(200, "Added book to bookclub");
+            }
+            return new ApiResponse(400, "Failed to add book to bookclub");
         }
 
         public async Task<ApiResponse> DeleteBookClub(int id)
@@ -109,12 +103,12 @@ namespace Library.Application.Services
             {
                 throw new Exception("id cannot be 0");
             }
-            var bookClub = await _bookClubRepository.GetBookClubById(id) ??throw new Exception ($"BookClub with id {id} does not exist") ;               
+            var bookClub = await _bookClubRepository.GetBookClubById(id) ?? throw new Exception($"BookClub with id {id} does not exist");
             var bookClubDto = _mapper.Map<GetBookClubDTO>(bookClub);
-            return bookClubDto;               
+            return bookClubDto;
         }
-            
-        
+
+
 
         public async Task<GetBookClubDTO> GetBookClubByName(string name)
         {
@@ -122,13 +116,13 @@ namespace Library.Application.Services
             {
                 throw new Exception("Name cannot be null");
             }
-                var bookClub = await _bookClubRepository.GetBookClubByName(name) ?? throw new Exception($"Bookclub with the name {name} does not exist");
-                var bookClubDto = _mapper.Map<GetBookClubDTO>(bookClub);
-                return bookClubDto;
-         }
-            
-            
-        
+            var bookClub = await _bookClubRepository.GetBookClubByName(name) ?? throw new Exception($"Bookclub with the name {name} does not exist");
+            var bookClubDto = _mapper.Map<GetBookClubDTO>(bookClub);
+            return bookClubDto;
+        }
+
+
+
 
         public async Task<List<GetBookClubDTO>> GetBookClubs()
         {
@@ -136,5 +130,37 @@ namespace Library.Application.Services
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
             return bookClubList;
         }
+
+        public async Task<ApiResponse> RemoveAuthorFromBookClub(int bookClubId, int authorId)
+        {
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            var author = await _authorRepository.GetAuthorById(authorId);
+            if (bookClub != null && author != null)
+            {
+                bookClub.Authors ??= new List<Author>();
+
+                bookClub.Authors.Remove(author);
+                await _bookClubRepository.EditBookClub(bookClub);
+                return new ApiResponse(200, "Removed author from bookclub");
+            }
+            return new ApiResponse(400, "Failed to remove author from bookclub");
+        }
+
+
+        public async Task<ApiResponse> RemoveBookFromBookClub(int bookClubId, int bookId)
+        {
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            var book = await _bookRepository.GetBookById(bookId);
+
+            if (bookClub != null && book != null)
+            {
+                bookClub.Books ??= new List<Book>();
+                bookClub.Books.Remove(book);
+                await _bookClubRepository.EditBookClub(bookClub);
+                return new ApiResponse(200, "Removed book from bookclub");
+            }
+            return new ApiResponse(400, "Failed to remove book from bookclub");
+        }
     }
 }
+
