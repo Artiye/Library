@@ -32,7 +32,7 @@ namespace Library.Application.Services
                 try
                 {
                     var book = _mapper.Map<Book>(dto);
-                    book.Authors ??= [];
+                    book.Authors ??= new List<Author>();
 
                     foreach (var authorId in dto.AuthorIds)
                     {

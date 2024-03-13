@@ -22,11 +22,37 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.AddBookClub(dto);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("AddBookToBookClub")]
+        public async Task<IActionResult> AddBookToBookClub(int bookClubId, int bookId)
+        {
+            var result = await _bookClubService.AddBookToBookClub(bookClubId, bookId);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("AddAuthorToBookClub")]
+        public async Task<IActionResult> AddAuthorToBookClub(int bookClubId, int authorId)
+        {
+            var result = await _bookClubService.AddAuthorToBookClub(bookClubId, authorId);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+
         [HttpPut]
 
         public async Task<IActionResult> EditBookClub([FromBody] EditBookClubDTO dto)
         {
             var result = await _bookClubService.EditBookClub(dto);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+        [HttpPut("RemoveBookFromBookClub")] 
+        public async Task<IActionResult> RemoveBookFromBookClub(int bookClubId, int bookId)
+        {
+            var result = await _bookClubService.RemoveBookFromBookClub(bookClubId, bookId);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+
+        }
+        [HttpPut("RemoveAuthorFromBookClub")]
+        public async Task<IActionResult> RemoveAuthorToBookClub(int bookClubId, int authorId)
+        {
+            var result = await _bookClubService.RemoveAuthorFromBookClub(bookClubId, authorId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
         [HttpDelete]
