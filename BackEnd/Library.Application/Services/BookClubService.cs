@@ -21,11 +21,14 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> AddAuthorToBookClub(int bookClubId, int authorId)
         {
+
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             var author = await _authorRepository.GetAuthorById(authorId);
             if (bookClub != null && author != null)
             {
                 bookClub.Authors ??= new List<Author>();
+                if (bookClub.Authors.Any(a => a.AuthorId == authorId))
+                    return new ApiResponse(400, "Author already exists");
 
                 bookClub.Authors.Add(author);
                 await _bookClubRepository.EditBookClub(bookClub);
@@ -56,6 +59,10 @@ namespace Library.Application.Services
             if (bookClub != null && book != null)
             {
                 bookClub.Books ??= new List<Book>();
+
+                if (bookClub.Books.Any(b => b.BookId == bookId))
+                    return new ApiResponse(400, "Book already exists");
+
                 bookClub.Books.Add(book);
                 await _bookClubRepository.EditBookClub(bookClub);
                 return new ApiResponse(200, "Added book to bookclub");

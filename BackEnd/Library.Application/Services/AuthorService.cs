@@ -45,6 +45,8 @@ namespace Library.Application.Services
             if(author != null && book != null)
             {
                 author.Books ??= new List<Book>();
+                if (author.Books.Any(b => b.BookId == bookId))
+                    return new ApiResponse(400, "The book you're trying to add already exists");
 
                 author.Books.Add(book);
                 await _authorRepository.EditAuthor(author);
