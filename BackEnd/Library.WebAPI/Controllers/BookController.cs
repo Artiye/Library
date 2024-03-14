@@ -18,6 +18,7 @@ namespace Library.WebAPI.Controllers
             _bookService = bookService;
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> AddBook(AddBookDTO dto)
         {
@@ -26,6 +27,7 @@ namespace Library.WebAPI.Controllers
         }
         
         [HttpPut]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> EditBook(EditBookDTO dto)
         {
@@ -33,6 +35,7 @@ namespace Library.WebAPI.Controllers
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var result = await _bookService.DeleteBook(id);

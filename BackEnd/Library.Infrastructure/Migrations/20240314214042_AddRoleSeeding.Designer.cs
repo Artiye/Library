@@ -4,6 +4,7 @@ using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240314214042_AddRoleSeeding")]
+    partial class AddRoleSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,24 +301,6 @@ namespace Library.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "adminuser123412903847192311234",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "dfcc1f6e-eb55-416b-9b79-fd89ed641e05",
-                            Email = "artinjobro@gmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
-                            NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGIv0PYIsao0TAb5k5FsQbp9vO+3sGQ4KrSP6qcVFNdyPx7czSAT4lxROYd4vUq7GQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "837e6343-8868-4a0a-923d-10138a49eeed",
-                            TwoFactorEnabled = false,
-                            UserName = "artinjobro@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -378,13 +363,6 @@ namespace Library.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "adminuser123412903847192311234",
-                            RoleId = "adminRoleId1293931239438254523"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

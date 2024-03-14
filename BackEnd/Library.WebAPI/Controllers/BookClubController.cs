@@ -18,6 +18,7 @@ namespace Library.WebAPI.Controllers
            _bookClubService = bookClubService;
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> AddBookClub([FromBody] AddBookClubDTOs dto)
         {
@@ -25,12 +26,14 @@ namespace Library.WebAPI.Controllers
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
         [HttpPost("AddBookToBookClub")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddBookToBookClub(int bookClubId, int bookId)
         {
             var result = await _bookClubService.AddBookToBookClub(bookClubId, bookId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
         [HttpPost("AddAuthorToBookClub")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddAuthorToBookClub(int bookClubId, int authorId)
         {
             var result = await _bookClubService.AddAuthorToBookClub(bookClubId, authorId);
@@ -38,13 +41,15 @@ namespace Library.WebAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> EditBookClub([FromBody] EditBookClubDTO dto)
         {
             var result = await _bookClubService.EditBookClub(dto);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        [HttpPut("RemoveBookFromBookClub")] 
+        [HttpPut("RemoveBookFromBookClub")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveBookFromBookClub(int bookClubId, int bookId)
         {
             var result = await _bookClubService.RemoveBookFromBookClub(bookClubId, bookId);
@@ -52,12 +57,14 @@ namespace Library.WebAPI.Controllers
 
         }
         [HttpPut("RemoveAuthorFromBookClub")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveAuthorToBookClub(int bookClubId, int authorId)
         {
             var result = await _bookClubService.RemoveAuthorFromBookClub(bookClubId, authorId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> DeleteBookClub(int id)
         {
