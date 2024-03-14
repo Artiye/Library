@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Library.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorController : ControllerBase
@@ -17,7 +18,7 @@ namespace Library.WebAPI.Controllers
         {
             _authorService = authorService;
         }
-        [HttpPost, Authorize]
+        [HttpPost]
 
         public async Task<IActionResult> AddAuthor([FromBody] AddAuthorDTO dto)
         {
