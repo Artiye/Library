@@ -57,6 +57,8 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookClubRepository, BookClubRepository>();
 builder.Services.AddScoped<IBookClubService, BookClubService>();
 
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+
 
 
 var app = builder.Build();
@@ -70,6 +72,7 @@ if (app.Environment.IsDevelopment())
 app.MapIdentityApi<IdentityUser>();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
     [FromBody] object empty) =>
