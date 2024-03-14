@@ -1,5 +1,6 @@
 ﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
@@ -16,7 +17,7 @@ namespace Library.WebAPI.Controllers
         {
             _authorService = authorService;
         }
-        [HttpPost]
+        [HttpPost, Authorize]
 
         public async Task<IActionResult> AddAuthor([FromBody] AddAuthorDTO dto)
         {
