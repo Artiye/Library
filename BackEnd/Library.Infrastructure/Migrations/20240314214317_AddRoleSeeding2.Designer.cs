@@ -4,6 +4,7 @@ using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240314214317_AddRoleSeeding2")]
+    partial class AddRoleSeeding2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,17 +307,16 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = "adminuser123412903847192311234",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dfcc1f6e-eb55-416b-9b79-fd89ed641e05",
+                            ConcurrencyStamp = "a2228774-2d43-4daf-bbd1-2ab33ce09d16",
                             Email = "artinjobro@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
-                            NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGIv0PYIsao0TAb5k5FsQbp9vO+3sGQ4KrSP6qcVFNdyPx7czSAT4lxROYd4vUq7GQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK4r5yq3EK4jeJIFyPVCRYZemdqw+eOgS/qVpEx8Ysu6SnHAvn2SOmA2nGSGpizrQQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "837e6343-8868-4a0a-923d-10138a49eeed",
+                            SecurityStamp = "76943c82-8930-45e7-879d-33e7bfea96e6",
                             TwoFactorEnabled = false,
-                            UserName = "artinjobro@gmail.com"
+                            UserName = "Art Morina"
                         });
                 });
 
