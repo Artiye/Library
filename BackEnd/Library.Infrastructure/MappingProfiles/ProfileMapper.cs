@@ -2,7 +2,9 @@
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookClubDTOs;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.IdentityDTOs;
 using Library.Domain.Entity;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +30,8 @@ namespace Library.Infrastructure.MappingProfiles
             CreateMap<BookClub, AddBookClubDTOs>().ReverseMap();
             CreateMap<BookClub, EditBookClubDTO>().ReverseMap();
             CreateMap<BookClub, GetBookClubDTO>().ReverseMap();
+
+            CreateMap<RegisterDTO, IdentityUser>().ReverseMap();
         }
     }
 }
