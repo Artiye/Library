@@ -11,5 +11,7 @@ namespace Library.Application.Services.Interfaces
     public interface IIdentityService
     {
         Task<ApiResponse> Register(RegisterDTO dto);
+
+        Task<ApiResponse> EditRole(RoleChangeDTO dto);
     }
 }
