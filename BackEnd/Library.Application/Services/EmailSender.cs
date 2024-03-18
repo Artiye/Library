@@ -9,39 +9,52 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Library.Application.Options;
+using Library.Application.Services.Interfaces;
 
 namespace Library.Application.Services
 {
-    public class EmailSender : IEmailSender
+    public class EmailSenderService : IEmailSender, IEmailSenderService
     {
-        private readonly EmailOptions _options;
-        public EmailSender(IOptions<EmailOptions> options)
+        private readonly EmailOptions _smtpSettings;
+        public EmailSenderService(IOptions<EmailOptions> smtpSettings)
         {
-            _options = options.Value;
+            _smtpSettings = smtpSettings.Value;
         }
 
-        public async Task SendEmailAsync(string toAddress, string subject, string bodyMessage)
+        public async Task SendEmailAsync(string toMail, string subject, string htmlMessage)
         {
-            string fromMail = _options.FromMail;
-            string fromPassword = _options.FromPassword;
-            string host = _options.Host;
-            int port = _options.Port;
-
-            MailMessage message = new MailMessage();
-            message.From = new MailAddress(fromMail);
-            message.To.Add(new MailAddress(toAddress));
+            MailMessage message = new();
+            message.From = new MailAddress(_smtpSettings.FromMail);
+            message.To.Add(new MailAddress(toMail));
             message.Subject = subject;
-            message.Body = bodyMessage;
+            message.Body = htmlMessage;
             message.IsBodyHtml = true;
 
-            var smtpClient = new SmtpClient(host)
+            using (var smtpClient = new SmtpClient(_smtpSettings.Host))
             {
-                Port = port,
-                Credentials = new NetworkCredential(fromMail, fromPassword),
-                EnableSsl = true,
-            };
+                smtpClient.Port = _smtpSettings.Port;
+                smtpClient.Credentials = new NetworkCredential(_smtpSettings.FromMail, _smtpSettings.FromPassword);
+                smtpClient.EnableSsl = true;
 
-            smtpClient.SendMailAsync(message);
+                await smtpClient.SendMailAsync(message);
+            }
         }
+ 
+        public async Task SendRegistrationEmailAsync(string email, string fullName, string mailContent)
+        {
+            var subject = "Welcome to Our Application";
+            StringBuilder bodyBuilder = new();
+            bodyBuilder.Append($"Dear {fullName},<br/><br/>");
+            bodyBuilder.Append("Welcome to Library!<br/><br/>");
+            bodyBuilder.Append("Please login!");
+            bodyBuilder.Append("<br/><br/>Thank you for joining us!");
+            bodyBuilder.Append(mailContent);
+
+            await SendEmailAsync(email, subject, bodyBuilder.ToString());
+        }
+
+
     }
+
+    
 }
