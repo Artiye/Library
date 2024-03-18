@@ -3,6 +3,7 @@ using Library.Application.DTOs.IdentityDTOs;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,15 @@ namespace Library.Application.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
+        private readonly IEmailSenderService _emailSenderService;
 
-
-        public IdentityService(UserManager<IdentityUser> userManager, IMapper mapper)
+        public IdentityService(UserManager<IdentityUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService)
         {
             _userManager = userManager;
             _mapper = mapper;
-
+            _emailSender = emailSender;
+            _emailSenderService = emailSenderService;
         }
 
 
@@ -36,20 +39,30 @@ namespace Library.Application.Services
                 return new ApiResponse(400, "Password and Confirm Password do not Match.");
 
             var identityUser = _mapper.Map<IdentityUser>(dto);
-
+            identityUser.UserName = dto.Email;
             var result = await _userManager.CreateAsync(identityUser, dto.Password);
             if (!result.Succeeded)
                 return new ApiResponse(400, "Something went Wrong.");
 
+            // Send email confirmation
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
+            string url =  "https://localhost:7278/api/Identity/ConfirmEmail?email=" + identityUser.Email;
+            string mailContent = "Confirm your account by  <a href=" + url + ">clicking here</a>";
+            await _emailSenderService.SendRegistrationEmailAsync(dto.Email, identityUser.UserName, mailContent);
+
+
+            // Send email using EmailSender
+            await _emailSender.SendEmailAsync(identityUser.Email, "Confirm your email", mailContent);
+
             var addingUser = await _userManager.AddToRoleAsync(identityUser, "User");
             if (addingUser.Succeeded)
-                return new ApiResponse(200, "User was Registered. Please Login!");
+                return new ApiResponse(200, "User was Registered. Please check your email to confirm!");
 
             return new ApiResponse(400, "Something went Wrong.");
         }
+
     }
 }
-
 
 
 

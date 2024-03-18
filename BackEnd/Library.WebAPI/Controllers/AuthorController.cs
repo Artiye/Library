@@ -18,47 +18,49 @@ namespace Library.WebAPI.Controllers
         {
             _authorService = authorService;
         }
-
-        [HttpPost]
         [Authorize(Roles = "Admin")]
-
+        [HttpPost]
+        
         public async Task<IActionResult> AddAuthor([FromBody] AddAuthorDTO dto)
         {
             var response = await _authorService.AddAuthor(dto);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
-        [HttpPost("AddAuthorToBook")]
         [Authorize(Roles = "Admin")]
+        [HttpPost("AddAuthorToBook")]
+        
         public async Task<IActionResult> AddBooksToAuthor( int authorId,  int bookId)
         {
             var response = await _authorService.AddBookToAuthor(authorId, bookId);
             return Ok(response);
         }
-        [HttpPut("RemoveBookFromAuthor")]
         [Authorize(Roles = "Admin")]
+        [HttpPut("RemoveBookFromAuthor")]
+       
         public async Task<IActionResult> RemoveBookFromAuthor(int authorId, int bookId)
         {
             var response = await _authorService.RemoveBookFromAuthor(authorId, bookId);
             return Ok(response);
         }
-        [HttpPut]
         [Authorize(Roles = "Admin")]
+        [HttpPut]
+       
         public async Task<IActionResult> EditAuthor([FromBody] EditAuthorDTO dto)
         {
             var response = await _authorService.EditAuthor(dto);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
-        
 
-        [HttpDelete]
         [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             var response = await _authorService.DeleteAuthor(id);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
-        
 
+        
         [HttpGet("{authorId}")]
 
         public async Task<IActionResult> GetAuthorById(int authorId)
@@ -66,6 +68,7 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.GetAuthorById(authorId);
             return Ok(response);
         }
+       
         [HttpGet("byname/{authorName}")]
 
         public async Task<IActionResult> GetAuthorByName(string authorName)
@@ -73,6 +76,7 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.GetAuthorByName(authorName);
             return Ok(response);
         }
+        
         [HttpGet]
         
         public async Task<IActionResult> GetAllAuthors()
@@ -80,6 +84,7 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.GetAllAuthors();
             return Ok(response);
         }
+       
         [HttpGet("{authorId}/books")]
         public async Task<IActionResult> GetBooksByAuthorId(int authorId)
         {

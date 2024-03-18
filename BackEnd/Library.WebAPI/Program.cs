@@ -34,17 +34,19 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("DefaultConnection not found")));
 
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
+builder.Services.AddTransient<IEmailSender, EmailSenderService>();
 
 
 builder.Services.Configure<EmailOptions>(
 builder.Configuration.GetSection(EmailOptions.EmailSender));
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -71,6 +73,7 @@ if (app.Environment.IsDevelopment())
 }
 app.MapIdentityApi<IdentityUser>();
 app.UseHttpsRedirection();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
