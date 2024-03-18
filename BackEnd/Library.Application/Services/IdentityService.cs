@@ -47,15 +47,13 @@ namespace Library.Application.Services
             if (!result.Succeeded)
                 return new ApiResponse(400, "Something went Wrong.");
 
-            // Send email confirmation
+            
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             string url =  "https://localhost:7278/api/Identity/ConfirmEmail?email=" + identityUser.Email;
             string mailContent = "Confirm your account by  <a href=" + url + ">clicking here</a>";
             await _emailSenderService.SendRegistrationEmailAsync(dto.Email, identityUser.UserName, mailContent);
 
 
-            // Send email using EmailSender
-            await _emailSender.SendEmailAsync(identityUser.Email, "Confirm your email", mailContent);
 
             var addingUser = await _userManager.AddToRoleAsync(identityUser, "User");
             if (addingUser.Succeeded)
