@@ -1,6 +1,7 @@
 ﻿using Library.Application.DTOs.IdentityDTOs;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,14 @@ namespace Library.WebAPI.Controllers
                 return new ApiResponse(200, "User email has been confirmed!");
             };
             return StatusCode(400, "Confirmation failed!");
+        }
+        [HttpPost("changerole")]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> ChangeUserRole(RoleChangeDTO dto)
+        {
+            var result = await _service.EditRole(dto);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
     }
 }
