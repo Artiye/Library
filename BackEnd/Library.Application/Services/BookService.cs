@@ -137,5 +137,34 @@ namespace Library.Application.Services
             var bookList = _mapper.Map<List<GetBookDTO>>(book);
             return bookList;
         }
+        public async Task<List<GetBookDTO>> GetBooksByLanguage(string language)
+        {
+            if(language == null)
+            {
+                throw new Exception("language cannot be null");
+            }
+            var book = await _bookRepository.GetBooksByLanguage(language);
+
+            if(book.Count == 0)            
+                throw new Exception($"Books with language {language} do not exist");
+            
+            var bookList = _mapper.Map<List<GetBookDTO>>(book);
+            return bookList;
+        }
+        public async Task<List<GetBookDTO>> GetBooksByGenre(string genre) { 
+            if (genre == null)
+            {
+                throw new Exception("genre cannot be null");
+            }
+
+            var book = await _bookRepository.GetBooksByGenre(genre);
+
+            if (book.Count == 0)
+                throw new Exception($"Books with that genre {genre} do not exist");
+
+            var bookList = _mapper.Map<List<GetBookDTO>>(book);
+            return bookList;
+        
+        }      
     }
 }

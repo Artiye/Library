@@ -25,5 +25,9 @@ namespace Library.Application.Services.Interfaces
         Task<List<GetBookDTO>> GetBooks();
 
         Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId);
+
+        Task<List<GetBookDTO>> GetBooksByLanguage(string language);
+
+        Task<List<GetBookDTO>> GetBooksByGenre(string genre);
     }
 }

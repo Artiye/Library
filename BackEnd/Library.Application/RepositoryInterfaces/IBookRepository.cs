@@ -23,6 +23,8 @@ namespace Library.Application.RepositoryInterfaces
 
         Task<List<Book>> GetAllBooks();
 
-        
+        Task<List<Book>> GetBooksByLanguage(string language);
+
+        Task<List<Book>> GetBooksByGenre(string genre);
     }
 }

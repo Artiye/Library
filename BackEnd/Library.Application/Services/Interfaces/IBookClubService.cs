@@ -1,5 +1,6 @@
 ﻿using Library.Application.DTOs.BookClubDTOs;
 using Library.Application.Responses;
+using Library.Domain.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,10 @@ namespace Library.Application.Services.Interfaces
         Task<GetBookClubDTO> GetBookClubByName(string name);
 
         Task<List<GetBookClubDTO>> GetBookClubs();
+
+        Task<List<GetBookClubDTO>> GetBookClubByGenre(string genre);
+
+        Task<List<GetBookClubDTO>> GetBookClubByLanguage(string language);
 
         Task<ApiResponse> AddBookToBookClub(int bookClubId, int bookId);
 

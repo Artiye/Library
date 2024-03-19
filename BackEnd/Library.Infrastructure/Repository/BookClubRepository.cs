@@ -1,5 +1,6 @@
 ﻿using Library.Application.RepositoryInterfaces;
 using Library.Domain.Entity;
+using Library.Domain.Enums;
 using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -60,6 +61,33 @@ namespace Library.Infrastructure.Repository
                 .Include(b => b.Books)
                 .FirstOrDefaultAsync(b => b.Name == name);
             return bookClub;
+        }
+        public async Task<List<BookClub>> GetBookClubByLanguage(string language)
+        {
+            if (!Enum.TryParse<Languages>(language, true, out var selectedLanguage))
+                return new List<BookClub>();
+
+            var bookclubList = await _context.Clubs
+                .Include(b => b.Authors)
+                .Include(b => b.Books)
+                .Where(b => b.Languages == selectedLanguage)
+                .ToListAsync();
+
+            return bookclubList;
+        }
+
+        public async Task<List<BookClub>> GetBookClubByGenre(string genre)
+        {
+            if (!Enum.TryParse<GenreTypes>(genre, true, out var selectedGenre))
+                return new List<BookClub>();
+
+            var bookclubList = await _context.Clubs
+                .Include(b => b.Authors)
+                .Include(b => b.Books)
+                .Where(b => b.Genre == selectedGenre)
+                .ToListAsync();
+            
+            return bookclubList;
         }
     }
 }
