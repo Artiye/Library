@@ -66,13 +66,28 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.GetBooks();
             return Ok(result);
         }
-        
+
         [HttpGet("author/{bookId}")]
         public async Task<IActionResult> GetAuthorOfABook(int bookId)
         {
             var result = await _bookService.GetAuthorOfABook(bookId);
             return Ok(result);
         }
+        [HttpGet("bylanguage/{language}")]
 
+        public async Task<IActionResult> GetBooksByLanguage(string language)
+        {
+            var result = await _bookService.GetBooksByLanguage(language);
+            return Ok(result);  
         }
+
+        [HttpGet("bygenre/{genre}")]
+
+        public async Task<IActionResult> GetBooksByGenre(string genre)
+        {
+            var result = await _bookService.GetBooksByGenre(genre);
+            return Ok(result);
+        }
+        }
+   
 }

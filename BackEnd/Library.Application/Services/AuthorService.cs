@@ -26,6 +26,8 @@ namespace Library.Application.Services
             {
                 if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.BioGraphy))
                     return new ApiResponse(400, "Do not leave empty or null strings");
+
+                
                 var author = _mapper.Map<Author>(dto);
 
                 await _authorRepository.AddAuthor(author);

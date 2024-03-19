@@ -100,5 +100,18 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.GetBookClubs();
             return Ok(result);
         }
+        [HttpGet("bylanguage/{language}")]
+
+        public async Task<IActionResult> GetBookClubByLanguage(string language)
+        {
+            var result = await _bookClubService.GetBookClubByLanguage(language);
+            return Ok(result);
+        }
+        [HttpGet("bygenre/{genre}")]
+        public async Task<IActionResult> GetBookClubByGenre(string genre)
+        {
+            var result = await _bookClubService.GetBookClubByGenre(genre);
+            return Ok(result);
+        }
     }
 }

@@ -4,6 +4,7 @@ using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
+using Library.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,7 +129,33 @@ namespace Library.Application.Services
             return bookClubDto;
         }
 
+        public async Task<List<GetBookClubDTO>> GetBookClubByLanguage(string language)
+        {
+            if (language == null)
+            {
+                throw new Exception("language cannot be null");
+            }
+            var bookClub = await _bookClubRepository.GetBookClubByLanguage(language);
+            if(bookClub.Count == 0)           
+                throw new Exception($"Books with that language {language} do not exist");
 
+            var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
+            return bookClubList;    
+        }
+
+        public async Task<List<GetBookClubDTO>> GetBookClubByGenre(string genre)
+        {
+            if (genre == null)
+            {
+                throw new Exception("genre cannot be null");
+            }
+            var bookClub = await _bookClubRepository.GetBookClubByGenre(genre);
+            if (bookClub.Count == 0)
+                throw new Exception($"Books with that genre {genre} do not exist");
+
+            var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
+            return bookClubList;
+        }
 
 
         public async Task<List<GetBookClubDTO>> GetBookClubs()

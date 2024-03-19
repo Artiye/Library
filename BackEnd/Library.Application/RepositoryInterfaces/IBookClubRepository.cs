@@ -20,5 +20,9 @@ namespace Library.Application.RepositoryInterfaces
         Task<BookClub> GetBookClubByName(string name);
 
         Task<List<BookClub>> GetAllBookClubs();
+
+        Task<List<BookClub>> GetBookClubByGenre(string genre);
+
+        Task<List<BookClub>> GetBookClubByLanguage(string language);
     }
 }
