@@ -2,6 +2,7 @@
 using Library.Domain.Entity;
 using Library.Domain.Enums;
 using Library.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace Library.Infrastructure.Repository
             var bookList = await _context.Clubs
                 .Include(b=> b.Authors)
                 .Include(b => b.Books)
+                .Include(b => b.Members)
                 .ToListAsync();
             return bookList;
         }
@@ -50,6 +52,7 @@ namespace Library.Infrastructure.Repository
             var bookClub = await _context.Clubs
                 .Include(b => b.Authors)
                 .Include(b => b.Books)
+                .Include(b => b.Members)
                 .FirstOrDefaultAsync(b => b.BookClubId == id);
             return bookClub;
         }
@@ -59,6 +62,7 @@ namespace Library.Infrastructure.Repository
             var bookClub = await _context.Clubs
                 .Include(b => b.Authors)
                 .Include(b => b.Books)
+                .Include(b => b.Members)
                 .FirstOrDefaultAsync(b => b.Name == name);
             return bookClub;
         }
@@ -83,11 +87,48 @@ namespace Library.Infrastructure.Repository
 
             var bookclubList = await _context.Clubs
                 .Include(b => b.Authors)
-                .Include(b => b.Books)
+                .Include(b => b.Books)               
                 .Where(b => b.Genre == selectedGenre)
                 .ToListAsync();
             
             return bookclubList;
+        }
+
+        public async Task<BookClubJoinRequest> AddJoinRequest(BookClubJoinRequest joinRequest)
+        {
+            await _context.JoinRequests.AddAsync(joinRequest);
+            await _context.SaveChangesAsync();
+            return joinRequest;
+        }
+
+        public async Task RemoveJoinRequest(BookClubJoinRequest joinRequest)
+        {
+            _context.JoinRequests.Remove(joinRequest);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<BookClubJoinRequest> GetJoinRequestById(int joinRequestId)
+        {
+            var joinRequest = await _context.JoinRequests.FindAsync(joinRequestId);
+            return joinRequest;
+        }
+
+        public async Task<BookClubJoinRequest> GetJoinRequestByBookClubAndUser(int bookClubId, string userId)
+        {
+            var joinRequest = await _context.JoinRequests
+                .FirstOrDefaultAsync(j => j.BookClubId == bookClubId && j.UserId == userId);
+            return joinRequest;
+        }
+
+        public async Task AddMemberToClub(int bookClubId, IdentityUser user)
+        {
+            var bookClub = await _context.Clubs.FindAsync(bookClubId);
+            if(bookClub != null)
+            {
+                bookClub.Members ??= new List<IdentityUser>();
+                bookClub.Members.Add(user);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
