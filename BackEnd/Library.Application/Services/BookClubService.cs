@@ -49,25 +49,43 @@ namespace Library.Application.Services
             {
                 if (string.IsNullOrEmpty(dto.Description) && string.IsNullOrEmpty(dto.Name))
                     return new ApiResponse(400, "Do not leave inputs empty");
+
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userEmail = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+                if (userId == null)
+                    return new ApiResponse(400, "User not authenticated");
+
                     var bookClub = _mapper.Map<BookClub>(dto);
+                    bookClub.OwnerId = userId;
+                    bookClub.OwnerEmail = userEmail;
+                    
                     await _bookClubRepository.AddBookClub(bookClub);
                     return new ApiResponse(200, "Added bookClub successfully");
                 }
+
                           
             return new ApiResponse(400, "Failed to add book");
         }
 
         public async Task<ApiResponse> AddBookToBookClub(int bookClubId, int bookId)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             var book = await _bookRepository.GetBookById(bookId);
 
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can add a book to the bookclub");
             if (bookClub != null && book != null)
             {
                 bookClub.Books ??= new List<Book>();
 
                 if (bookClub.Books.Any(b => b.BookId == bookId))
                     return new ApiResponse(400, "Book already exists");
+
+            
 
                 bookClub.Books.Add(book);
                 await _bookClubRepository.EditBookClub(bookClub);
@@ -78,9 +96,16 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> DeleteBookClub(int id)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(userId == null)
+               return new ApiResponse(400, "User not authenticated");
+
             var bookClub = await _bookClubRepository.GetBookClubById(id);
             if (bookClub != null)
             {
+                if (bookClub.OwnerId != userId)
+                    return new ApiResponse(400, "Only the owner can delete this bookclub");
+
                 await _bookClubRepository.DeleteBookClub(bookClub);
                 return new ApiResponse(200, "Deleted Book");
             }
@@ -91,10 +116,17 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> EditBookClub(EditBookClubDTO dto)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
             var bookClub = await _bookClubRepository.GetBookClubById(dto.BookClubId);
 
             if (bookClub != null)
             {
+                if (bookClub.OwnerId != userId)
+                    return new ApiResponse(400, "Only the owner can edit this bookclub");
+
                 if (bookClub.Description == dto.Description && bookClub.Name == dto.Name)
                     return new ApiResponse(400, "Nothing has changed");
 
@@ -202,16 +234,14 @@ namespace Library.Application.Services
         }
 
         public async Task<ApiResponse> RequestToJoinBookClub(int bookClubId)
-        {           
-
+        {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return new ApiResponse(400, "User not authenticated");
 
-
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             if (bookClub == null)
-                return new ApiResponse(400,"Book Club not found");
+                return new ApiResponse(400, "Book Club not found");
 
             if (bookClub.Members.Any(m => m.Id == userId))
                 return new ApiResponse(400, "You are already a member in this bookclub");
@@ -220,6 +250,12 @@ namespace Library.Application.Services
             if (existingRequest != null)
                 return new ApiResponse(400, "You have already requested to join this book club");
 
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new ApiResponse(400, "User not found");
+
+            if (bookClub.OwnerId == userId)
+                return new ApiResponse(400, "Owner cannot request to join their own club");
 
             var joinRequest = new BookClubJoinRequest
             {
@@ -232,36 +268,61 @@ namespace Library.Application.Services
             return new ApiResponse(200, "Join request has been sent");
         }
 
+
+
         public async Task<ApiResponse> AcceptJoinRequest(int joinRequestId)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
             var joinRequest = await _bookClubRepository.GetJoinRequestById(joinRequestId);
             if (joinRequest == null)
                 return new ApiResponse(400, "Join request not found");
 
-            var bookClubId = joinRequest.BookClubId;
-            var userId = joinRequest.UserId;
+            var bookClub = await _bookClubRepository.GetBookClubById(joinRequest.BookClubId);
+            if (bookClub == null)
+                return new ApiResponse(400, "Book Club not found");
+
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can accept join requests");
 
             joinRequest.isAccepted = true;
             await _bookClubRepository.RemoveJoinRequest(joinRequest);
 
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(joinRequest.UserId);
             if (user == null)
                 return new ApiResponse(400, "User not found");
 
-            await _bookClubRepository.AddMemberToClub(bookClubId, user);
+            if (!bookClub.Members.Any(m => m.Id == joinRequest.UserId))
+                bookClub.Members.Add(user);
+
+            await _bookClubRepository.EditBookClub(bookClub);
+
             return new ApiResponse(200, "Join request has been accepted");
         }
 
+
         public async Task<ApiResponse> DenyJoinRequest(int joinRequestId)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
             var joinRequest = await _bookClubRepository.GetJoinRequestById(joinRequestId);
             if (joinRequest == null)
-            {
-                return new ApiResponse(400,"Join request not found.");
-            }
+                return new ApiResponse(400, "Join request not found");
+
+            var bookClub = await _bookClubRepository.GetBookClubById(joinRequest.BookClubId);
+            if (bookClub == null)
+                return new ApiResponse(400, "Book Club not found");
+
+            
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can deny join requests");
 
             await _bookClubRepository.RemoveJoinRequest(joinRequest);
-            return new ApiResponse(200,"Join request has been denied.");
+            return new ApiResponse(200, "Join request has been denied");
         }
     }
 }
