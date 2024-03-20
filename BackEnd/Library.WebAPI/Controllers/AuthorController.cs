@@ -60,7 +60,7 @@ namespace Library.WebAPI.Controllers
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
 
-        
+        [AllowAnonymous]
         [HttpGet("{authorId}")]
 
         public async Task<IActionResult> GetAuthorById(int authorId)
@@ -68,7 +68,7 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.GetAuthorById(authorId);
             return Ok(response);
         }
-       
+        [AllowAnonymous]
         [HttpGet("byname/{authorName}")]
 
         public async Task<IActionResult> GetAuthorByName(string authorName)
@@ -76,7 +76,7 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.GetAuthorByName(authorName);
             return Ok(response);
         }
-        
+        [AllowAnonymous]
         [HttpGet]
         
         public async Task<IActionResult> GetAllAuthors()
@@ -84,7 +84,7 @@ namespace Library.WebAPI.Controllers
             var response = await _authorService.GetAllAuthors();
             return Ok(response);
         }
-       
+        [AllowAnonymous]
         [HttpGet("{authorId}/books")]
         public async Task<IActionResult> GetBooksByAuthorId(int authorId)
         {
