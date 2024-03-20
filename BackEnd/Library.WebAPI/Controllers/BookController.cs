@@ -43,7 +43,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.DeleteBook(id);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        
+        [AllowAnonymous]
         [HttpGet("{bookId}")]
 
         public async Task<IActionResult> GetBookById(int bookId)
@@ -51,14 +51,14 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.GetBookById(bookId);
             return Ok(result);
         }
-      
+        [AllowAnonymous]
         [HttpGet("bytitle/{bookTitle}")]
         public async Task<IActionResult> GetBookByTitle(string bookTitle)
         {
             var result = await _bookService.GetBookByTitle(bookTitle);
             return Ok(result);
         }
-       
+        [AllowAnonymous]
         [HttpGet]
 
         public async Task<IActionResult> GetBooks()
@@ -66,13 +66,14 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.GetBooks();
             return Ok(result);
         }
-
+        [AllowAnonymous]
         [HttpGet("author/{bookId}")]
         public async Task<IActionResult> GetAuthorOfABook(int bookId)
         {
             var result = await _bookService.GetAuthorOfABook(bookId);
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpGet("bylanguage/{language}")]
 
         public async Task<IActionResult> GetBooksByLanguage(string language)
@@ -80,7 +81,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookService.GetBooksByLanguage(language);
             return Ok(result);  
         }
-
+        [AllowAnonymous]
         [HttpGet("bygenre/{genre}")]
 
         public async Task<IActionResult> GetBooksByGenre(string genre)

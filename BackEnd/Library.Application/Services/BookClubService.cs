@@ -5,17 +5,20 @@ using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
 using Library.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookClubService(UserManager<IdentityUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
+    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager = userManager;
         private readonly IBookClubRepository _bookClubRepository = bookClubRepository;
         private readonly IMapper _mapper = mapper;
@@ -198,8 +201,14 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to remove book from bookclub");
         }
 
-        public async Task<ApiResponse> RequestToJoinBookClub(int bookClubId, string userId)
-        {
+        public async Task<ApiResponse> RequestToJoinBookClub(int bookClubId)
+        {           
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
+
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             if (bookClub == null)
                 return new ApiResponse(400,"Book Club not found");

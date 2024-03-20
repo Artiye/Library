@@ -78,7 +78,7 @@ namespace Library.WebAPI.Controllers
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
 
-      
+        [AllowAnonymous]
         [HttpGet("{bookClubId}")]
 
         public async Task<IActionResult> GetBookClubById(int bookClubId)
@@ -86,7 +86,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.GetBookClubById(bookClubId);
             return Ok(result);
         }
-       
+        [AllowAnonymous]
         [HttpGet("byname/{bookClubName}")]
 
         public async Task<IActionResult> GetBookClubByName(string bookClubName)
@@ -96,11 +96,13 @@ namespace Library.WebAPI.Controllers
         }
         
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllBookClubs()
         {
             var result = await _bookClubService.GetBookClubs();
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpGet("bylanguage/{language}")]
 
         public async Task<IActionResult> GetBookClubByLanguage(string language)
@@ -108,19 +110,21 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.GetBookClubByLanguage(language);
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpGet("bygenre/{genre}")]
         public async Task<IActionResult> GetBookClubByGenre(string genre)
         {
             var result = await _bookClubService.GetBookClubByGenre(genre);
             return Ok(result);
         }
+        
         [HttpPost("request-to-join")]
-        public async Task<IActionResult> RequestToJoinBookClub([FromQuery] int bookClubId, [FromQuery] string userId)
+        public async Task<IActionResult> RequestToJoinBookClub([FromQuery] int bookClubId)
         {
-            var response = await _bookClubService.RequestToJoinBookClub(bookClubId, userId);
+            var response = await _bookClubService.RequestToJoinBookClub(bookClubId);
             return response.Status == 200? Ok(response) : BadRequest(response);
         }
-
+        
         [HttpPost("accept-join-request")]
         public async Task<IActionResult> AcceptJoinRequest([FromQuery] int joinRequestId)
         {
