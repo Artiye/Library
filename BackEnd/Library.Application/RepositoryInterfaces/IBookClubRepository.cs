@@ -1,4 +1,5 @@
 ﻿using Library.Domain.Entity;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,15 @@ namespace Library.Application.RepositoryInterfaces
         Task<List<BookClub>> GetBookClubByGenre(string genre);
 
         Task<List<BookClub>> GetBookClubByLanguage(string language);
+
+        Task<BookClubJoinRequest> AddJoinRequest(BookClubJoinRequest joinRequest);
+
+        Task RemoveJoinRequest(BookClubJoinRequest joinRequest);
+
+        Task<BookClubJoinRequest> GetJoinRequestById(int joinRequestId);
+
+        Task<BookClubJoinRequest> GetJoinRequestByBookClubAndUser(int bookClubId, string userId);
+
+        Task AddMemberToClub(int bookClubId, IdentityUser user);
     }
 }

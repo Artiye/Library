@@ -1,5 +1,6 @@
 ﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.UserDTOs;
 using Library.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,7 @@ namespace Library.Application.DTOs.BookClubDTOs
         public List<GetOnlyAuthorDTO> Authors { get; set; }
 
         public List<GetOnlyBookDTO> Books { get; set; }
+
+        public List<GetUserDTO> Members { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Library.Application.DTOs.BookClubDTOs;
+﻿using Azure;
+using Library.Application.DTOs.BookClubDTOs;
 using Library.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -112,6 +113,26 @@ namespace Library.WebAPI.Controllers
         {
             var result = await _bookClubService.GetBookClubByGenre(genre);
             return Ok(result);
+        }
+        [HttpPost("request-to-join")]
+        public async Task<IActionResult> RequestToJoinBookClub([FromQuery] int bookClubId, [FromQuery] string userId)
+        {
+            var response = await _bookClubService.RequestToJoinBookClub(bookClubId, userId);
+            return response.Status == 200? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPost("accept-join-request")]
+        public async Task<IActionResult> AcceptJoinRequest([FromQuery] int joinRequestId)
+        {
+            var response = await _bookClubService.AcceptJoinRequest(joinRequestId);
+            return response.Status == 200 ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPost("deny-join-request")]
+        public async Task<IActionResult> DenyJoinRequest([FromQuery] int joinRequestId)
+        {
+            var response= await _bookClubService.DenyJoinRequest(joinRequestId);
+            return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
     }
 }

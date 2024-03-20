@@ -22,6 +22,8 @@ namespace Library.Infrastructure.Data
 
             public DbSet<BookClub> Clubs { get; set; }
 
+            public DbSet<BookClubJoinRequest> JoinRequests { get; set; }
+
             
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +40,18 @@ namespace Library.Infrastructure.Data
             modelBuilder.Entity<BookClub>()
                 .HasMany(b => b.Books)
                 .WithMany(b => b.Clubs);
+
+            modelBuilder.Entity<BookClubJoinRequest>()
+                .HasOne(j => j.BookClub)
+                .WithMany(b => b.BookClubJoinRequests)
+                .HasForeignKey(j => j.BookClubId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BookClubJoinRequest>()
+                .HasOne(j => j.User)
+                .WithMany()
+                .HasForeignKey(j => j.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

@@ -5,6 +5,7 @@ using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
 using Library.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,9 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookClubService(IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
+    public class BookClubService(UserManager<IdentityUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
     {
+        private readonly UserManager<IdentityUser> _userManager = userManager;
         private readonly IBookClubRepository _bookClubRepository = bookClubRepository;
         private readonly IMapper _mapper = mapper;
         private readonly IAuthorRepository _authorRepository = authorRepository;
@@ -194,6 +196,63 @@ namespace Library.Application.Services
                 return new ApiResponse(200, "Removed book from bookclub");
             }
             return new ApiResponse(400, "Failed to remove book from bookclub");
+        }
+
+        public async Task<ApiResponse> RequestToJoinBookClub(int bookClubId, string userId)
+        {
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            if (bookClub == null)
+                return new ApiResponse(400,"Book Club not found");
+
+            if (bookClub.Members.Any(m => m.Id == userId))
+                return new ApiResponse(400, "You are already a member in this bookclub");
+
+            var existingRequest = await _bookClubRepository.GetJoinRequestByBookClubAndUser(bookClubId, userId);
+            if (existingRequest != null)
+                return new ApiResponse(400, "You have already requested to join this book club");
+
+
+            var joinRequest = new BookClubJoinRequest
+            {
+                BookClubId = bookClubId,
+                UserId = userId,
+                isAccepted = false
+            };
+
+            await _bookClubRepository.AddJoinRequest(joinRequest);
+            return new ApiResponse(200, "Join request has been sent");
+        }
+
+        public async Task<ApiResponse> AcceptJoinRequest(int joinRequestId)
+        {
+            var joinRequest = await _bookClubRepository.GetJoinRequestById(joinRequestId);
+            if (joinRequest == null)
+                return new ApiResponse(400, "Join request not found");
+
+            var bookClubId = joinRequest.BookClubId;
+            var userId = joinRequest.UserId;
+
+            joinRequest.isAccepted = true;
+            await _bookClubRepository.RemoveJoinRequest(joinRequest);
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new ApiResponse(400, "User not found");
+
+            await _bookClubRepository.AddMemberToClub(bookClubId, user);
+            return new ApiResponse(200, "Join request has been accepted");
+        }
+
+        public async Task<ApiResponse> DenyJoinRequest(int joinRequestId)
+        {
+            var joinRequest = await _bookClubRepository.GetJoinRequestById(joinRequestId);
+            if (joinRequest == null)
+            {
+                return new ApiResponse(400,"Join request not found.");
+            }
+
+            await _bookClubRepository.RemoveJoinRequest(joinRequest);
+            return new ApiResponse(200,"Join request has been denied.");
         }
     }
 }

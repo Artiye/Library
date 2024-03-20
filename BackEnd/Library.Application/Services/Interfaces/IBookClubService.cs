@@ -34,5 +34,12 @@ namespace Library.Application.Services.Interfaces
         Task<ApiResponse> RemoveBookFromBookClub(int bookClubId, int bookId);
 
         Task<ApiResponse> RemoveAuthorFromBookClub(int bookClubId, int authorId);
+
+        Task<ApiResponse> RequestToJoinBookClub(int bookClubId, string userId);
+
+        Task<ApiResponse> AcceptJoinRequest(int joinRequestId);
+
+        Task<ApiResponse> DenyJoinRequest(int joinRequestId);
+
     }
 }

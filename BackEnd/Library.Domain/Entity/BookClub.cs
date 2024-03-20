@@ -1,4 +1,5 @@
 ﻿using Library.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,10 @@ namespace Library.Domain.Entity
         public List<Author> Authors { get; set; }
 
         public List<Book>  Books { get; set; }
+
+        public List<BookClubJoinRequest> BookClubJoinRequests { get; set; }
+
+        public List<IdentityUser> Members { get; set; }
 
         
 
