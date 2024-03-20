@@ -27,5 +27,9 @@ namespace Library.Application.DTOs.BookClubDTOs
         public List<GetOnlyBookDTO> Books { get; set; }
 
         public List<GetUserDTO> Members { get; set; }
+
+        public string OwnerId { get; set; }
+
+        public string OwnerEmail { get; set; }
     }
 }

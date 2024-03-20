@@ -18,7 +18,7 @@ namespace Library.WebAPI.Controllers
         {
            _bookClubService = bookClubService;
         }
-        [Authorize(Roles = "Admin")]
+        
         [HttpPost]
         
 
@@ -27,7 +27,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.AddBookClub(dto);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        [Authorize(Roles = "Admin")]
+        
         [HttpPost("AddBookToBookClub")]
         
         public async Task<IActionResult> AddBookToBookClub(int bookClubId, int bookId)
@@ -35,7 +35,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.AddBookToBookClub(bookClubId, bookId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        [Authorize(Roles = "Admin")]
+        
         [HttpPost("AddAuthorToBookClub")]
       
         public async Task<IActionResult> AddAuthorToBookClub(int bookClubId, int authorId)
@@ -43,7 +43,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.AddAuthorToBookClub(bookClubId, authorId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        [Authorize(Roles = "Admin")]
+        
         [HttpPut]
        
 
@@ -52,7 +52,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.EditBookClub(dto);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        [Authorize(Roles = "Admin")]
+       
         [HttpPut("RemoveBookFromBookClub")]
         
         public async Task<IActionResult> RemoveBookFromBookClub(int bookClubId, int bookId)
@@ -61,7 +61,7 @@ namespace Library.WebAPI.Controllers
             return result.Status == 200 ? Ok(result) : BadRequest(result);
 
         }
-        [Authorize(Roles = "Admin")]
+       
         [HttpPut("RemoveAuthorFromBookClub")]
         
         public async Task<IActionResult> RemoveAuthorToBookClub(int bookClubId, int authorId)
@@ -69,7 +69,7 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.RemoveAuthorFromBookClub(bookClubId, authorId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
-        [Authorize(Roles = "Admin")]
+        
         [HttpDelete]
         
         public async Task<IActionResult> DeleteBookClub(int id)

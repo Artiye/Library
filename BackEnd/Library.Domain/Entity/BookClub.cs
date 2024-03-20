@@ -28,6 +28,10 @@ namespace Library.Domain.Entity
 
         public List<IdentityUser> Members { get; set; }
 
+        public string OwnerId { get; set; }
+
+        public string OwnerEmail { get; set; }
+
         
 
 
