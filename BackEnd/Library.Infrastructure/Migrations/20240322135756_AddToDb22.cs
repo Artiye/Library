@@ -34,8 +34,8 @@ namespace Library.Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -322,6 +322,8 @@ namespace Library.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookClubId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     isAccepted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -353,7 +355,7 @@ namespace Library.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminuser123412903847192311234", 0, "04a323c1-d7a3-435e-aafd-068502c01ce9", "artinjobro@gmail.com", false, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAECaacWGJcWcLvvonlHFfVnL/ckd69104hfhQbNL2A6F2iXVl38Aplrl3GUZ3QXCNtg==", null, false, "6193a0ad-ba1c-44fe-9f46-3fa1ccf39e7c", false, "artinjobro@gmail.com" });
+                values: new object[] { "adminuser123412903847192311234", 0, "318ea9fa-0c64-4302-8a43-ba7a9d55a609", "artinjobro@gmail.com", false, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEOtKl3GmkzFbWtzqgViQNf0+9cIE+pHqyo5rLRv5Xkp+ICePcxOED+efKnmBwgADcg==", null, false, "d59a3f61-7d60-4f34-a2cc-2f658ed81647", false, "artinjobro@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

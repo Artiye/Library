@@ -27,9 +27,15 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> AddAuthorToBookClub(int bookClubId, int authorId)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
 
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             var author = await _authorRepository.GetAuthorById(authorId);
+
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can add an author to the bookclub");
             if (bookClub != null && author != null)
             {
                 bookClub.Authors ??= new List<Author>();
@@ -101,6 +107,8 @@ namespace Library.Application.Services
                return new ApiResponse(400, "User not authenticated");
 
             var bookClub = await _bookClubRepository.GetBookClubById(id);
+
+
             if (bookClub != null)
             {
                 if (bookClub.OwnerId != userId)
@@ -204,8 +212,14 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> RemoveAuthorFromBookClub(int bookClubId, int authorId)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             var author = await _authorRepository.GetAuthorById(authorId);
+
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can remove this author from the bookclub");
             if (bookClub != null && author != null)
             {
                 bookClub.Authors ??= new List<Author>();
@@ -220,8 +234,14 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> RemoveBookFromBookClub(int bookClubId, int bookId)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             var book = await _bookRepository.GetBookById(bookId);
+
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can remove this book from the bookclub");
 
             if (bookClub != null && book != null)
             {
@@ -260,7 +280,9 @@ namespace Library.Application.Services
             var joinRequest = new BookClubJoinRequest
             {
                 BookClubId = bookClubId,
-                UserId = userId,
+                UserId = userId,               
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 isAccepted = false
             };
 
