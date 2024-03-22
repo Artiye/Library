@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240321204410_AddToDb22")]
+    [Migration("20240322135756_AddToDb22")]
     partial class AddToDb22
     {
         /// <inheritdoc />
@@ -109,7 +109,6 @@ namespace Library.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -123,7 +122,6 @@ namespace Library.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Nationality")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
@@ -170,7 +168,7 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = "adminuser123412903847192311234",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "04a323c1-d7a3-435e-aafd-068502c01ce9",
+                            ConcurrencyStamp = "318ea9fa-0c64-4302-8a43-ba7a9d55a609",
                             Email = "artinjobro@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Art",
@@ -180,9 +178,9 @@ namespace Library.Infrastructure.Migrations
                             Nationality = "Kosovar",
                             NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
                             NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECaacWGJcWcLvvonlHFfVnL/ckd69104hfhQbNL2A6F2iXVl38Aplrl3GUZ3QXCNtg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOtKl3GmkzFbWtzqgViQNf0+9cIE+pHqyo5rLRv5Xkp+ICePcxOED+efKnmBwgADcg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6193a0ad-ba1c-44fe-9f46-3fa1ccf39e7c",
+                            SecurityStamp = "d59a3f61-7d60-4f34-a2cc-2f658ed81647",
                             TwoFactorEnabled = false,
                             UserName = "artinjobro@gmail.com"
                         });
@@ -308,6 +306,14 @@ namespace Library.Infrastructure.Migrations
 
                     b.Property<int>("BookClubId")
                         .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
