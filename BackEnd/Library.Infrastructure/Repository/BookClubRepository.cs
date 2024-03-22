@@ -120,12 +120,12 @@ namespace Library.Infrastructure.Repository
             return joinRequest;
         }
 
-        public async Task AddMemberToClub(int bookClubId, IdentityUser user)
+        public async Task AddMemberToClub(int bookClubId, ApplicationUser user)
         {
             var bookClub = await _context.Clubs.FindAsync(bookClubId);
             if(bookClub != null)
             {
-                bookClub.Members ??= new List<IdentityUser>();
+                bookClub.Members ??= new List<ApplicationUser>();
                 bookClub.Members.Add(user);
                 await _context.SaveChangesAsync();
             }

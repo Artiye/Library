@@ -26,14 +26,12 @@ namespace Library.Domain.Entity
 
         public List<BookClubJoinRequest> BookClubJoinRequests { get; set; }
 
-        public List<IdentityUser> Members { get; set; }
+        public List<ApplicationUser> Members { get; set; }
 
         public string OwnerId { get; set; }
 
         public string OwnerEmail { get; set; }
-
-        
-
+       
 
     }
 }

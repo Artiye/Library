@@ -2,6 +2,7 @@ using Library.Application.Options;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Services;
 using Library.Application.Services.Interfaces;
+using Library.Domain.Entity;
 using Library.Infrastructure.Data;
 using Library.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
@@ -37,7 +38,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("DefaultConnection not found")));
 
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddRoles<IdentityRole>()
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoleManager<RoleManager<IdentityRole>>();
 
@@ -72,13 +73,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<ApplicationUser>();
 app.UseHttpsRedirection();
 
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
+app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager,
     [FromBody] object empty) =>
 {
     if (empty != null)

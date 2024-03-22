@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options) { }
         
@@ -41,6 +41,10 @@ namespace Library.Infrastructure.Data
                 .HasMany(b => b.Books)
                 .WithMany(b => b.Clubs);
 
+            modelBuilder.Entity<BookClub>()
+                .HasMany(bc => bc.Members)
+                .WithMany(bc => bc.BookClubs);
+
             modelBuilder.Entity<BookClubJoinRequest>()
                 .HasOne(j => j.BookClub)
                 .WithMany(b => b.BookClubJoinRequests)
@@ -52,6 +56,8 @@ namespace Library.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(j => j.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
