@@ -61,15 +61,15 @@ namespace Library.Application.Services
                 if (userId == null)
                     return new ApiResponse(400, "User not authenticated");
 
-                    var bookClub = _mapper.Map<BookClub>(dto);
-                    bookClub.OwnerId = userId;
-                    bookClub.OwnerEmail = userEmail;
-                    
-                    await _bookClubRepository.AddBookClub(bookClub);
-                    return new ApiResponse(200, "Added bookClub successfully");
-                }
+                var bookClub = _mapper.Map<BookClub>(dto);
+                bookClub.OwnerId = userId;
+                bookClub.OwnerEmail = userEmail;
 
-                          
+                await _bookClubRepository.AddBookClub(bookClub);
+                return new ApiResponse(200, "Added bookClub successfully");
+            }
+
+
             return new ApiResponse(400, "Failed to add book");
         }
 
@@ -91,7 +91,7 @@ namespace Library.Application.Services
                 if (bookClub.Books.Any(b => b.BookId == bookId))
                     return new ApiResponse(400, "Book already exists");
 
-            
+
 
                 bookClub.Books.Add(book);
                 await _bookClubRepository.EditBookClub(bookClub);
@@ -103,8 +103,8 @@ namespace Library.Application.Services
         public async Task<ApiResponse> DeleteBookClub(int id)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(userId == null)
-               return new ApiResponse(400, "User not authenticated");
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
 
             var bookClub = await _bookClubRepository.GetBookClubById(id);
 
@@ -181,11 +181,11 @@ namespace Library.Application.Services
                 throw new Exception("language cannot be null");
             }
             var bookClub = await _bookClubRepository.GetBookClubByLanguage(language);
-            if(bookClub.Count == 0)           
+            if (bookClub.Count == 0)
                 throw new Exception($"Books with that language {language} do not exist");
 
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
-            return bookClubList;    
+            return bookClubList;
         }
 
         public async Task<List<GetBookClubDTO>> GetBookClubByGenre(string genre)
@@ -280,7 +280,7 @@ namespace Library.Application.Services
             var joinRequest = new BookClubJoinRequest
             {
                 BookClubId = bookClubId,
-                UserId = userId,               
+                UserId = userId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 isAccepted = false
@@ -343,13 +343,38 @@ namespace Library.Application.Services
             if (bookClub == null)
                 return new ApiResponse(400, "Book Club not found");
 
-            
+
             if (bookClub.OwnerId != userId)
                 return new ApiResponse(400, "Only the owner can deny join requests");
 
             await _bookClubRepository.RemoveJoinRequest(joinRequest);
             return new ApiResponse(200, "Join request has been denied");
         }
+        public async Task<ApiResponse> RemoveMemberFromBookClub(int bookClubId, string memberId)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            if (bookClub == null)
+                return new ApiResponse(400, "Bookclub not found");
+
+            if (bookClub.OwnerId != userId)
+                return new ApiResponse(400, "Only the owner can kick a member from the bookclub");
+
+            var memberToRemove = await _userManager.FindByIdAsync(memberId);
+            if (memberToRemove == null)
+                return new ApiResponse(400, "Member does not exist");
+
+            if (!bookClub.Members.Any(m => m.Id == memberToRemove.Id))
+                return new ApiResponse(400, "The user specified is not a part of this bookclub");           
+
+            bookClub.Members.Remove(memberToRemove);
+            await _bookClubRepository.EditBookClub(bookClub);
+            return new ApiResponse(200, "Member kicked successfully");
+        }
     }
 }
+
 

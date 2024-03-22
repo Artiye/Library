@@ -69,6 +69,13 @@ namespace Library.WebAPI.Controllers
             var result = await _bookClubService.RemoveAuthorFromBookClub(bookClubId, authorId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
+        [HttpPut("RemoveMemberFromBookClub")]
+
+        public async Task<IActionResult> RemoveMemberFromBookClub(int bookClubId, string memberId)
+        {
+            var result = await _bookClubService.RemoveMemberFromBookClub(bookClubId, memberId);
+            return result.Status == 200? Ok(result) : BadRequest(result);
+        }
         
         [HttpDelete]
         
@@ -118,6 +125,8 @@ namespace Library.WebAPI.Controllers
             return Ok(result);
         }
         
+   
+        
         [HttpPost("request-to-join")]
         public async Task<IActionResult> RequestToJoinBookClub([FromQuery] int bookClubId)
         {
@@ -138,5 +147,6 @@ namespace Library.WebAPI.Controllers
             var response= await _bookClubService.DenyJoinRequest(joinRequestId);
             return response.Status == 200 ? Ok(response) : BadRequest(response);
         }
+        
     }
 }
