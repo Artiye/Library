@@ -22,7 +22,7 @@ namespace Library.Application.Services
         private readonly IEmailSenderService _emailSenderService;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public IdentityService(UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager         )
+        public IdentityService(UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _mapper = mapper;

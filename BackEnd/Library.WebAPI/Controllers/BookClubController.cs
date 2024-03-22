@@ -71,9 +71,9 @@ namespace Library.WebAPI.Controllers
         }
         [HttpPut("RemoveMemberFromBookClub")]
 
-        public async Task<IActionResult> RemoveMemberFromBookClub(int bookClubId, string memberId)
+        public async Task<IActionResult> RemoveMemberFromBookClub(int bookClubId, string memberId, string reason)
         {
-            var result = await _bookClubService.RemoveMemberFromBookClub(bookClubId, memberId);
+            var result = await _bookClubService.RemoveMemberFromBookClub(bookClubId, memberId, reason);
             return result.Status == 200? Ok(result) : BadRequest(result);
         }
         
