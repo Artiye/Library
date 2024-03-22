@@ -7,6 +7,7 @@ using Library.Domain.Entity;
 using Library.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
+    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository, IEmailSender emailSender) : IBookClubService
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
@@ -24,6 +25,7 @@ namespace Library.Application.Services
         private readonly IMapper _mapper = mapper;
         private readonly IAuthorRepository _authorRepository = authorRepository;
         private readonly IBookRepository _bookRepository = bookRepository;
+        private readonly IEmailSender _emailSender = emailSender;
 
         public async Task<ApiResponse> AddAuthorToBookClub(int bookClubId, int authorId)
         {
@@ -350,7 +352,7 @@ namespace Library.Application.Services
             await _bookClubRepository.RemoveJoinRequest(joinRequest);
             return new ApiResponse(200, "Join request has been denied");
         }
-        public async Task<ApiResponse> RemoveMemberFromBookClub(int bookClubId, string memberId)
+        public async Task<ApiResponse> RemoveMemberFromBookClub(int bookClubId, string memberId, string reason)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -368,7 +370,19 @@ namespace Library.Application.Services
                 return new ApiResponse(400, "Member does not exist");
 
             if (!bookClub.Members.Any(m => m.Id == memberToRemove.Id))
-                return new ApiResponse(400, "The user specified is not a part of this bookclub");           
+                return new ApiResponse(400, "The user specified is not a part of this bookclub");
+
+            var memberEmail = await _userManager.GetEmailAsync(memberToRemove);
+            if(!string.IsNullOrEmpty(memberEmail))
+            {
+                var emailSubject = "You have been removed from the book club";
+                var emailBody = $"Dear {memberToRemove.FirstName}, \n \n  " +
+                    $"You have been removed from the bookclub {bookClub.Name} for the following reason: \n \n " +
+                    $"{reason}\n \n " +
+                    "Thank you.";
+
+                await _emailSender.SendEmailAsync(memberEmail, emailSubject, emailBody);
+            }
 
             bookClub.Members.Remove(memberToRemove);
             await _bookClubRepository.EditBookClub(bookClub);
