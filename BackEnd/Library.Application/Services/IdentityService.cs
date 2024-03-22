@@ -2,6 +2,7 @@
 using Library.Application.DTOs.IdentityDTOs;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
+using Library.Domain.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
@@ -15,13 +16,13 @@ namespace Library.Application.Services
 {
     public class IdentityService : IIdentityService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IEmailSenderService _emailSenderService;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public IdentityService(UserManager<IdentityUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager         )
+        public IdentityService(UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager         )
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -41,7 +42,7 @@ namespace Library.Application.Services
             if (dto.Password != dto.ConfirmPassword)
                 return new ApiResponse(400, "Password and Confirm Password do not Match.");
 
-            var identityUser = _mapper.Map<IdentityUser>(dto);
+            var identityUser = _mapper.Map<ApplicationUser>(dto);
             identityUser.UserName = dto.Email;
             var result = await _userManager.CreateAsync(identityUser, dto.Password);
             if (!result.Succeeded)

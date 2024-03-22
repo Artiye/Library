@@ -16,10 +16,10 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
+    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository) : IBookClubService
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IBookClubRepository _bookClubRepository = bookClubRepository;
         private readonly IMapper _mapper = mapper;
         private readonly IAuthorRepository _authorRepository = authorRepository;
@@ -294,8 +294,12 @@ namespace Library.Application.Services
             if (user == null)
                 return new ApiResponse(400, "User not found");
 
+
             if (!bookClub.Members.Any(m => m.Id == joinRequest.UserId))
+            {
                 bookClub.Members.Add(user);
+                await _bookClubRepository.EditBookClub(bookClub);
+            }
 
             await _bookClubRepository.EditBookClub(bookClub);
 

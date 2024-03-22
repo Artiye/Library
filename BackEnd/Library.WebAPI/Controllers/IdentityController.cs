@@ -1,6 +1,7 @@
 ﻿using Library.Application.DTOs.IdentityDTOs;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
+using Library.Domain.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,8 +14,8 @@ namespace Library.WebAPI.Controllers
     public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _service;
-        private readonly UserManager<IdentityUser> _userManager;
-        public IdentityController(IIdentityService service, UserManager<IdentityUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public IdentityController(IIdentityService service, UserManager<ApplicationUser> userManager)
         {
             _service = service;
             _userManager = userManager;

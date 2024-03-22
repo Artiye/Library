@@ -12,6 +12,16 @@ namespace Library.Application.DTOs.IdentityDTOs
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+        [Required]
+        public string FirstName { get; set; }
+       
+        [Required]
+        public string LastName { get; set; }
+
+        public string? Gender { get; set; }
+
+        public string? Nationality { get; set; }
+
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

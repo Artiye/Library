@@ -31,10 +31,9 @@ namespace Library.Infrastructure.MappingProfiles
             CreateMap<BookClub, AddBookClubDTOs>().ReverseMap();
             CreateMap<BookClub, EditBookClubDTO>().ReverseMap();
             CreateMap<BookClub, GetBookClubDTO>().ReverseMap();
-
-            CreateMap<RegisterDTO, IdentityUser>().ReverseMap();
-
-            CreateMap<GetUserDTO, IdentityUser>().ReverseMap();
+            
+            CreateMap<RegisterDTO, ApplicationUser>().ReverseMap();
+            CreateMap<GetUserDTO, ApplicationUser>().ReverseMap();
         }
     }
 }
