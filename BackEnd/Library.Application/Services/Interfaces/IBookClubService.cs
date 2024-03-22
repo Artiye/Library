@@ -41,5 +41,7 @@ namespace Library.Application.Services.Interfaces
 
         Task<ApiResponse> DenyJoinRequest(int joinRequestId);
 
+        Task<ApiResponse> RemoveMemberFromBookClub(int bookClubId, string memberId);
+
     }
 }
