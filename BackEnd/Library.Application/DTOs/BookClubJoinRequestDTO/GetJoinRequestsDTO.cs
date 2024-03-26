@@ -1,30 +1,21 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Domain.Entity
+namespace Library.Application.DTOs.BookClubJoinRequestDTO
 {
-    public class BookClubJoinRequest
+    public class GetJoinRequestsDTO
     {
         public int BookClubJoinRequestId { get; set; }
 
-        public int BookClubId { get; set; }
-
-        public BookClub BookClub { get; set; }
-
         public string UserId { get; set; }
-
-        public ApplicationUser User { get; set; }
 
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
 
         public string Reason { get; set; }
-
-        public bool IsAccepted { get; set; }
     }
 }

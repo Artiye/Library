@@ -35,5 +35,7 @@ namespace Library.Application.RepositoryInterfaces
         Task<BookClubJoinRequest> GetJoinRequestByBookClubAndUser(int bookClubId, string userId);
 
         Task AddMemberToClub(int bookClubId, ApplicationUser user);
+
+        Task<List<BookClubJoinRequest>> GetJoinRequestsForBookClub(int bookClubId);
     }
 }

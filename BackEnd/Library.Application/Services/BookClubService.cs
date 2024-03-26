@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.BookClubDTOs;
+using Library.Application.DTOs.BookClubJoinRequestDTO;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
@@ -255,7 +256,7 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to remove book from bookclub");
         }
 
-        public async Task<ApiResponse> RequestToJoinBookClub(int bookClubId)
+        public async Task<ApiResponse> RequestToJoinBookClub(int bookClubId, string reason)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -285,7 +286,8 @@ namespace Library.Application.Services
                 UserId = userId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                isAccepted = false
+                Reason = reason,
+                IsAccepted = false
             };
 
             await _bookClubRepository.AddJoinRequest(joinRequest);
@@ -311,7 +313,7 @@ namespace Library.Application.Services
             if (bookClub.OwnerId != userId)
                 return new ApiResponse(400, "Only the owner can accept join requests");
 
-            joinRequest.isAccepted = true;
+            joinRequest.IsAccepted = true;
             await _bookClubRepository.RemoveJoinRequest(joinRequest);
 
             var user = await _userManager.FindByIdAsync(joinRequest.UserId);
@@ -331,7 +333,7 @@ namespace Library.Application.Services
         }
 
 
-        public async Task<ApiResponse> DenyJoinRequest(int joinRequestId)
+        public async Task<ApiResponse> DenyJoinRequest(int joinRequestId, string reason)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -348,6 +350,22 @@ namespace Library.Application.Services
 
             if (bookClub.OwnerId != userId)
                 return new ApiResponse(400, "Only the owner can deny join requests");
+
+            var user = await _userManager.FindByIdAsync(joinRequest.UserId);
+            if (user == null)
+                return new ApiResponse(400, "User not found");
+
+            var userEmail = await _userManager.GetEmailAsync(user);
+            if (string.IsNullOrEmpty(userEmail))
+                return new ApiResponse(400, "User email not found");
+
+            var emailSubject = "Join Request Denied";
+            var emailBody = $"Dear {user.FirstName} {user.LastName}, \n \n" +
+                $"Your join request for bookclub '{bookClub.Name}' has been denied for the following reason: \n \n " +
+                $"Reason: {reason} \n \n";
+
+            await _emailSender.SendEmailAsync(userEmail, emailSubject, emailBody);
+
 
             await _bookClubRepository.RemoveJoinRequest(joinRequest);
             return new ApiResponse(200, "Join request has been denied");
@@ -373,13 +391,12 @@ namespace Library.Application.Services
                 return new ApiResponse(400, "The user specified is not a part of this bookclub");
 
             var memberEmail = await _userManager.GetEmailAsync(memberToRemove);
-            if(!string.IsNullOrEmpty(memberEmail))
+            if (!string.IsNullOrEmpty(memberEmail))
             {
                 var emailSubject = "You have been removed from the book club";
                 var emailBody = $"Dear {memberToRemove.FirstName}, \n \n  " +
                     $"You have been removed from the bookclub {bookClub.Name} for the following reason: \n \n " +
-                    $"{reason}\n \n " +
-                    "Thank you.";
+                    $"{reason}\n \n";
 
                 await _emailSender.SendEmailAsync(memberEmail, emailSubject, emailBody);
             }
@@ -387,6 +404,25 @@ namespace Library.Application.Services
             bookClub.Members.Remove(memberToRemove);
             await _bookClubRepository.EditBookClub(bookClub);
             return new ApiResponse(200, "Member kicked successfully");
+        }
+
+        public async Task<List<GetJoinRequestsDTO>> GetJoinRequestsForOwner(int bookClubId)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                throw new Exception("You are not authorized");
+
+            var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
+            if (bookClub == null)
+                throw new Exception("BookClub not found");
+
+            if (bookClub.OwnerId != userId)
+                throw new Exception("Only the owner can see the join requests");
+
+            var joinRequests = await _bookClubRepository.GetJoinRequestsForBookClub(bookClubId);
+            var joinRequestDTO = _mapper.Map<List<GetJoinRequestsDTO>>(joinRequests);
+
+            return joinRequestDTO;
         }
     }
 }

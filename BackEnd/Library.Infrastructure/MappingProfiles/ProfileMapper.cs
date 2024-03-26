@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookClubDTOs;
+using Library.Application.DTOs.BookClubJoinRequestDTO;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.IdentityDTOs;
 using Library.Application.DTOs.UserDTOs;
@@ -31,6 +32,8 @@ namespace Library.Infrastructure.MappingProfiles
             CreateMap<BookClub, AddBookClubDTOs>().ReverseMap();
             CreateMap<BookClub, EditBookClubDTO>().ReverseMap();
             CreateMap<BookClub, GetBookClubDTO>().ReverseMap();
+
+            CreateMap<BookClubJoinRequest,GetJoinRequestsDTO>().ReverseMap(); 
             
             CreateMap<RegisterDTO, ApplicationUser>().ReverseMap();
             CreateMap<GetUserDTO, ApplicationUser>().ReverseMap();
