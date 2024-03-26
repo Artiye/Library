@@ -63,6 +63,8 @@ builder.Services.AddScoped<IBookClubService, BookClubService>();
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 
 
 var app = builder.Build();
