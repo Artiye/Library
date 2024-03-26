@@ -47,7 +47,7 @@ namespace Library.Application.Services
             bodyBuilder.Append($"Dear {fullName},<br/><br/>");
             bodyBuilder.Append("Welcome to Library!<br/><br/>");
             bodyBuilder.Append("Please login!");
-            bodyBuilder.Append("<br/><br/>Thank you for joining us!");
+            bodyBuilder.Append("<br/><br/>Thank you for joining us!<br/><br/>");
             bodyBuilder.Append(mailContent);
 
             await SendEmailAsync(email, subject, bodyBuilder.ToString());

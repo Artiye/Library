@@ -130,5 +130,12 @@ namespace Library.Infrastructure.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<List<BookClubJoinRequest>> GetJoinRequestsForBookClub(int bookClubId)
+        {
+            return await _context.JoinRequests
+                .Where(jr => jr.BookClubId == bookClubId)
+                .ToListAsync();
+        }
     }
 }
