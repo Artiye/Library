@@ -30,10 +30,17 @@ namespace Library.WebAPI.Controllers
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
         [HttpDelete]
-       
-        public async Task<IActionResult> DeleteMyProfile()
+
+        public async Task<IActionResult> DeleteMyProfile(string password)
         {
-            var result = await _profileService.DeleteProfile();
+            var result = await _profileService.DeleteProfile(password);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+        
+        [HttpGet("confirm-delete")]
+        public async Task<IActionResult> ConfirmDelete(string userId)
+        {
+            var result = await _profileService.ConfirmDelete(userId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
     }

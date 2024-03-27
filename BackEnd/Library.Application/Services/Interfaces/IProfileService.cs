@@ -15,6 +15,8 @@ namespace Library.Application.Services.Interfaces
 
         Task<ApiResponse> EditProfile(EditProfileDTO dto);
 
-        Task<ApiResponse> DeleteProfile();
+        Task<ApiResponse> DeleteProfile(string password);
+
+        Task<ApiResponse> ConfirmDelete(string userId);
     }
 }

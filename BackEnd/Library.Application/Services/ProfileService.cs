@@ -5,6 +5,7 @@ using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +20,17 @@ namespace Library.Application.Services
         private readonly IHttpContextAccessor _httpContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
 
-        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper)
+        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender)
         {
             _httpContext = httpContext;
             _userManager = userManager;
             _mapper = mapper;
+            _emailSender = emailSender;
         }
 
-        public async Task<ApiResponse> DeleteProfile()
+        public async Task<ApiResponse> DeleteProfile(string password)
         {
             var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -37,10 +40,42 @@ namespace Library.Application.Services
             if (user == null)
                 return new ApiResponse(400, "User not found");
 
-            await _userManager.DeleteAsync(user);
-            return new ApiResponse(200, "Deleted your profile");
+            var validPassword = await _userManager.CheckPasswordAsync(user, password);
+            if (!validPassword)
+                return new ApiResponse(400, "Password is not valid");
+
+            var confirmationLink = $"https://localhost:7278/api/Profile/confirm-delete?userId={user.Id}";
+            await _emailSender.SendEmailAsync(user.Email, "Confirm account deletion",
+                $"To confirm the deletion of your account, click <a href='{confirmationLink}'>here</a>.");
+
            
+            return new ApiResponse(200, "Confirmation email sent for deleting your profile");
         }
+
+        public async Task<ApiResponse> ConfirmDelete(string userId)
+        {
+            var check = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (check == null)
+                return new ApiResponse(400, "User not authenticated");
+
+            if (check != userId)
+                return new ApiResponse(400, "You cannot delete another users account");
+
+            if (userId == null)
+                return new ApiResponse(400, "Invalid user ID");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new ApiResponse(400, "User not found");
+                 
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return new ApiResponse(500, "Failed to delete the user");
+
+            return new ApiResponse(200, "Account deleted successfully");
+        }
+    
+
 
         public async Task<ApiResponse> EditProfile(EditProfileDTO dto)
         {
