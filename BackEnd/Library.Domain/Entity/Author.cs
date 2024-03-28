@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +17,7 @@ namespace Library.Domain.Entity
 
         public string Nationality { get; set; }
 
-        public string BioGraphy { get; set; }
+        public string Biography { get; set; }
 
         public string ProfileImage { get; set; }
 
@@ -27,4 +30,32 @@ namespace Library.Domain.Entity
         public List<BookClub> Clubs { get; set; }
 
     }
+    public class AuthorConfiguration : IEntityTypeConfiguration<Author>
+    {
+        public void Configure(EntityTypeBuilder<Author> builder)
+        {
+            builder.HasKey(a => a.AuthorId);
+            builder.Property(a => a.FullName).IsRequired();
+
+
+            builder.HasMany(a => a.Books)
+                .WithMany(b => b.Authors)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AuthorBooks",
+                    j => j.HasOne<Book>().WithMany().HasForeignKey("BookId").OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<Author>().WithMany().HasForeignKey("AuthorId").OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        j.HasKey("AuthorId", "BookId");
+                        j.ToTable("AuthorBooks");
+                    });
+
+           
+        }
+    }
 }
+
+
+
+
+
