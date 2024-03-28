@@ -76,16 +76,16 @@ namespace Library.Application.Services
             var author = await _authorRepository.GetAuthorById(dto.AuthorId);
             if(author != null)
             {
-                if (author.BioGraphy == dto.BioGraphy && 
+                if (author.Biography == dto.Biography && 
                     author.FullName == dto.FullName &&                   
                     author.Nationality == dto.Nationality &&
                     author.ProfileImage == dto.ProfileImage)
                 return new ApiResponse(400, "Nothing was edited");
 
-                if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.BioGraphy))
+                if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.Biography))
                     return new ApiResponse(400, "Do not leave empty or null strings");
 
-                author.BioGraphy = dto.BioGraphy;
+                author.Biography = dto.Biography;
                 author.FullName = dto.FullName;
                 author.Nationality = dto.Nationality;               
                 author.ProfileImage = dto.ProfileImage;

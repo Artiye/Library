@@ -14,7 +14,7 @@ namespace Library.Application.DTOs.AuthorDTOs
 
         public string Nationality { get; set; }
 
-        public string BioGraphy { get; set; }
+        public string Biography { get; set; }
 
         public string ProfileImage { get; set; }
 
