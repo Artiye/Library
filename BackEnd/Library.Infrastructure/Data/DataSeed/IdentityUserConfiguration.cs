@@ -27,6 +27,7 @@ namespace Library.Infrastructure.Data.DataSeed
                 NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
                 Email = "artinjobro@gmail.com",
                 NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
+                EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "Artmorina.1"),
                 SecurityStamp = Guid.NewGuid().ToString(),
             });

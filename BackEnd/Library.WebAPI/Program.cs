@@ -42,6 +42,11 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRol
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoleManager<RoleManager<IdentityRole>>();
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true;
+});
+
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 builder.Services.AddTransient<IEmailSender, EmailSenderService>();
 
