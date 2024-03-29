@@ -86,6 +86,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<PreventDuplicateLoginMiddleware>();
 app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager,
     [FromBody] object empty) =>
 {
