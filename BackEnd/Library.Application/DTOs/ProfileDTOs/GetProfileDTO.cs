@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Library.Application.DTOs.BookClubDTOs;
+using Library.Application.DTOs.BookDTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +18,7 @@ namespace Library.Application.DTOs.ProfileDTOs
         public string? Gender { get; set; }
 
         public string? Nationality { get; set; }
+
+       
     }
 }

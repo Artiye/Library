@@ -21,7 +21,7 @@ namespace Library.Domain.Entity
 
         public int Pages { get; set; }
 
-        public string CoverImage { get; set; }
+        public string? CoverImage { get; set; }
 
         public double Rating { get; set; }
         

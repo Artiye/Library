@@ -43,5 +43,20 @@ namespace Library.WebAPI.Controllers
             var result = await _profileService.ConfirmDelete(userId);
             return result.Status == 200 ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("add-book-to-readlist")]
+
+        public async Task<IActionResult> AddBookToReadList(int bookId)
+        {
+            var result = await _profileService.AddBookToReadList(bookId);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("read-list")]
+
+        public async Task<IActionResult> GetMyReadList()
+        {
+            var result = await _profileService.GetMyReadList();
+            return Ok(result);
+        }
+
     }
 }
