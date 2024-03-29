@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
+using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +24,15 @@ namespace Library.Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
+        private readonly IBookRepository _bookRepository;
 
-        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender)
+        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IBookRepository bookRepository)
         {
             _httpContext = httpContext;
             _userManager = userManager;
             _mapper = mapper;
             _emailSender = emailSender;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ApiResponse> DeleteProfile(string password)
@@ -115,5 +120,71 @@ namespace Library.Application.Services
 
             return userDTO;
         }
+
+        public async Task<ApiResponse> AddBookToReadList(int bookId)
+        {
+            var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new ApiResponse(400, "User not found");
+
+            
+            var bookToAdd = await _bookRepository.GetBookById(bookId); 
+            if (bookToAdd == null)
+                return new ApiResponse(400, "Book not found");
+
+           
+            await _userManager.Users.Include(u => u.Books).FirstOrDefaultAsync(u => u.Id == userId);
+
+            
+            if (!user.Books.Any(b => b.BookId == bookToAdd.BookId))
+            {
+                
+                user.Books.Add(bookToAdd);
+            }
+            else
+            {
+                return new ApiResponse(400, "Book already exists in the user list");
+            }
+
+           
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return new ApiResponse(200, "Book added to read list successfully");
+            }
+            else
+            {
+                return new ApiResponse(400, "Failed to add book to read list");
+            }
+        }
+
+
+        public async Task<List<GetBookDTO>> GetMyReadList()
+        {
+            var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                throw new Exception("User not authorized");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new Exception("User not found");
+
+            
+            await _userManager.Users.Include(u => u.Books).FirstOrDefaultAsync(u => u.Id == userId);
+
+            var booksInReadList = user.Books;
+
+            if (booksInReadList == null || booksInReadList.Count == 0)
+                throw new Exception("No books added");
+
+            var booksDTO = _mapper.Map<List<GetBookDTO>>(booksInReadList);
+
+            return booksDTO;
+        }
+
     }
 }

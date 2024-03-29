@@ -1,4 +1,5 @@
-﻿using Library.Application.DTOs.ProfileDTOs;
+﻿using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.ProfileDTOs;
 using Library.Application.Responses;
 using Library.Domain.Entity;
 using System;
@@ -18,5 +19,10 @@ namespace Library.Application.Services.Interfaces
         Task<ApiResponse> DeleteProfile(string password);
 
         Task<ApiResponse> ConfirmDelete(string userId);
-    }
+
+        Task<ApiResponse> AddBookToReadList(int bookId);
+
+        Task<List<GetBookDTO>> GetMyReadList();
+
+     }
 }
