@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240320233602_AddToDb18")]
-    partial class AddToDb18
+    [Migration("20240329143042_AddToDb3530")]
+    partial class AddToDb3530
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,49 +25,165 @@ namespace Library.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AuthorBook", b =>
+            modelBuilder.Entity("ApplicationUserBookClub", b =>
                 {
-                    b.Property<int>("AuthorsAuthorId")
+                    b.Property<int>("BookClubId")
                         .HasColumnType("int");
 
-                    b.Property<int>("BooksBookId")
-                        .HasColumnType("int");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("AuthorsAuthorId", "BooksBookId");
+                    b.HasKey("BookClubId", "ApplicationUserId");
 
-                    b.HasIndex("BooksBookId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("AuthorBook");
+                    b.ToTable("BookClubMember", (string)null);
                 });
 
             modelBuilder.Entity("AuthorBookClub", b =>
                 {
-                    b.Property<int>("AuthorsAuthorId")
+                    b.Property<int>("BookClubId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClubsBookClubId")
+                    b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
-                    b.HasKey("AuthorsAuthorId", "ClubsBookClubId");
+                    b.HasKey("BookClubId", "AuthorId");
 
-                    b.HasIndex("ClubsBookClubId");
+                    b.HasIndex("AuthorId");
 
-                    b.ToTable("AuthorBookClub");
+                    b.ToTable("AuthorBookClub", (string)null);
+                });
+
+            modelBuilder.Entity("AuthorBooks", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("AuthorBooks", (string)null);
                 });
 
             modelBuilder.Entity("BookBookClub", b =>
                 {
-                    b.Property<int>("BooksBookId")
+                    b.Property<int>("BookClubId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClubsBookClubId")
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.HasKey("BooksBookId", "ClubsBookClubId");
+                    b.HasKey("BookClubId", "BookId");
 
-                    b.HasIndex("ClubsBookClubId");
+                    b.HasIndex("BookId");
 
-                    b.ToTable("BookBookClub");
+                    b.ToTable("BookBookClub", (string)null);
+                });
+
+            modelBuilder.Entity("Library.Domain.Entity.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "adminuser123412903847192311234",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "cfc951e6-c3ca-475e-9dcb-1623154b9899",
+                            Email = "artinjobro@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Art",
+                            Gender = "Male",
+                            LastName = "Morina",
+                            LockoutEnabled = false,
+                            Nationality = "Kosovar",
+                            NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
+                            NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEj/UNogx/ojw+3XCEctVrBvMZVrn0PJBdBV+xRDIheUjqHxUi1eQZ45UxChxm4QzQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "38ec6446-7baa-491f-8afa-57c8130ef329",
+                            TwoFactorEnabled = false,
+                            UserName = "artinjobro@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("Library.Domain.Entity.Author", b =>
@@ -78,7 +194,7 @@ namespace Library.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
 
-                    b.Property<string>("BioGraphy")
+                    b.Property<string>("Biography")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -113,8 +229,10 @@ namespace Library.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("CoverImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -141,6 +259,8 @@ namespace Library.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Books");
                 });
@@ -172,10 +292,11 @@ namespace Library.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("BookClubId");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Clubs");
                 });
@@ -191,12 +312,24 @@ namespace Library.Infrastructure.Migrations
                     b.Property<int>("BookClubId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isAccepted")
-                        .HasColumnType("bit");
 
                     b.HasKey("BookClubJoinRequestId");
 
@@ -271,94 +404,6 @@ namespace Library.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BookClubId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookClubId");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "adminuser123412903847192311234",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "ed202c67-6b03-4214-bff4-c19410de8b09",
-                            Email = "artinjobro@gmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
-                            NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE/2o6GyoXa/tX1HfIbHuApxRz1zE2qobyHminbGLu86sbPFIzbRP4j9xRSCR4WjtQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "0c65b46d-4bbd-4ffd-831c-93265677b822",
-                            TwoFactorEnabled = false,
-                            UserName = "artinjobro@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -449,17 +494,17 @@ namespace Library.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AuthorBook", b =>
+            modelBuilder.Entity("ApplicationUserBookClub", b =>
                 {
-                    b.HasOne("Library.Domain.Entity.Author", null)
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
                         .WithMany()
-                        .HasForeignKey("AuthorsAuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Library.Domain.Entity.Book", null)
+                    b.HasOne("Library.Domain.Entity.BookClub", null)
                         .WithMany()
-                        .HasForeignKey("BooksBookId")
+                        .HasForeignKey("BookClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -468,30 +513,62 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.HasOne("Library.Domain.Entity.Author", null)
                         .WithMany()
-                        .HasForeignKey("AuthorsAuthorId")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Library.Domain.Entity.BookClub", null)
                         .WithMany()
-                        .HasForeignKey("ClubsBookClubId")
+                        .HasForeignKey("BookClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AuthorBooks", b =>
+                {
+                    b.HasOne("Library.Domain.Entity.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Library.Domain.Entity.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("BookBookClub", b =>
                 {
-                    b.HasOne("Library.Domain.Entity.Book", null)
+                    b.HasOne("Library.Domain.Entity.BookClub", null)
                         .WithMany()
-                        .HasForeignKey("BooksBookId")
+                        .HasForeignKey("BookClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Domain.Entity.BookClub", null)
+                    b.HasOne("Library.Domain.Entity.Book", null)
                         .WithMany()
-                        .HasForeignKey("ClubsBookClubId")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Library.Domain.Entity.Book", b =>
+                {
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
+                        .WithMany("Books")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Library.Domain.Entity.BookClub", b =>
+                {
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", "Owner")
+                        .WithMany("Clubs")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Library.Domain.Entity.BookClubJoinRequest", b =>
@@ -499,13 +576,13 @@ namespace Library.Infrastructure.Migrations
                     b.HasOne("Library.Domain.Entity.BookClub", "BookClub")
                         .WithMany("BookClubJoinRequests")
                         .HasForeignKey("BookClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("BookClub");
@@ -522,16 +599,9 @@ namespace Library.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.HasOne("Library.Domain.Entity.BookClub", null)
-                        .WithMany("Members")
-                        .HasForeignKey("BookClubId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -540,7 +610,7 @@ namespace Library.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -555,7 +625,7 @@ namespace Library.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -564,18 +634,23 @@ namespace Library.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Library.Domain.Entity.ApplicationUser", b =>
+                {
+                    b.Navigation("Books");
+
+                    b.Navigation("Clubs");
+                });
+
             modelBuilder.Entity("Library.Domain.Entity.BookClub", b =>
                 {
                     b.Navigation("BookClubJoinRequests");
-
-                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

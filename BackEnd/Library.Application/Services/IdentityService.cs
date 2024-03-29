@@ -3,12 +3,14 @@ using Library.Application.DTOs.IdentityDTOs;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,20 +23,29 @@ namespace Library.Application.Services
         private readonly IEmailSender _emailSender;
         private readonly IEmailSenderService _emailSenderService;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public IdentityService(UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager)
+        public IdentityService(UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContext)
         {
             _userManager = userManager;
             _mapper = mapper;
             _emailSender = emailSender;
             _emailSenderService = emailSenderService;
             _roleManager = roleManager;
+            _httpContext = httpContext;
         }
 
 
 
         public async Task<ApiResponse> Register(RegisterDTO dto)
         {
+            var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId != null)
+            {
+                
+                return new ApiResponse(400, "You are already registered and logged in.");
+            }
+
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user != null)
                 return new ApiResponse(400, "This User Exists.");
