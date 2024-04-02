@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb3530 : Migration
+    public partial class AddToDb211 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -54,24 +54,6 @@ namespace Library.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Authors",
-                columns: table => new
-                {
-                    AuthorId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Biography = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateOfDeath = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Authors", x => x.AuthorId);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,6 +160,30 @@ namespace Library.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Authors",
+                columns: table => new
+                {
+                    AuthorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Biography = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateOfDeath = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authors", x => x.AuthorId);
+                    table.ForeignKey(
+                        name: "FK_Authors_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -365,7 +371,7 @@ namespace Library.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminuser123412903847192311234", 0, "cfc951e6-c3ca-475e-9dcb-1623154b9899", "artinjobro@gmail.com", true, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEEj/UNogx/ojw+3XCEctVrBvMZVrn0PJBdBV+xRDIheUjqHxUi1eQZ45UxChxm4QzQ==", null, false, "38ec6446-7baa-491f-8afa-57c8130ef329", false, "artinjobro@gmail.com" });
+                values: new object[] { "adminuser123412903847192311234", 0, "37dd1d3f-b505-4b41-b037-e88952079b14", "artinjobro@gmail.com", true, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEHgamQbZOb6nuZzYXdMGxOn9ahAh8o9VJWFH/qbI+Blg8NgzOI7iaBJ5zOehlz/qWg==", null, false, "39acc57f-5931-4e17-966a-1b8e501af0bf", false, "artinjobro@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -420,6 +426,11 @@ namespace Library.Infrastructure.Migrations
                 name: "IX_AuthorBooks_BookId",
                 table: "AuthorBooks",
                 column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Authors_ApplicationUserId",
+                table: "Authors",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookBookClub_BookId",

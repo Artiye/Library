@@ -75,12 +75,18 @@ namespace Library.Application.Services
         }
            public async Task<ApiResponse> EditRole(RoleChangeDTO dto)
           {
+            var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authenticated");
+
             var user = await _userManager.FindByIdAsync(dto.UserId);
             if (user == null)
                 return new ApiResponse(400, "User not found");
 
             if (!await _roleManager.RoleExistsAsync(dto.NewRole))
                 return new ApiResponse(400, "Role doesnt exist");
+
+           
 
             var currentRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
