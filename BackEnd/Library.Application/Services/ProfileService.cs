@@ -140,9 +140,9 @@ namespace Library.Application.Services
             var bookToAdd = await _bookRepository.GetBookById(bookId); 
             if (bookToAdd == null)
                 return new ApiResponse(400, "Book not found");
-           
-            await _userManager.Users.Include(u => u.Books).FirstOrDefaultAsync(u => u.Id == userId);
-            
+
+            user.Books ??= new List<Book>();
+
             if (!user.Books.Any(b => b.BookId == bookToAdd.BookId))
             {               
                 user.Books.Add(bookToAdd);
@@ -176,8 +176,8 @@ namespace Library.Application.Services
             var authorToAdd = await _authorRepository.GetAuthorById(authorId);
             if (authorToAdd == null)
                 return new ApiResponse(400, "Author not found");
-
-            await _userManager.Users.Include(u => u.Authors).FirstOrDefaultAsync(u => u.Id == userId); 
+           
+            user.Authors ??= new List<Author>();
 
             if(!user.Authors.Any(u => u.AuthorId == authorToAdd.AuthorId))
             {
