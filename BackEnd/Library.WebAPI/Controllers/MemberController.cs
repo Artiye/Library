@@ -20,5 +20,18 @@ namespace Library.WebAPI.Controllers
             var members = await _memberService.GetAllMembers();
             return Ok(members);
         }
+        [HttpGet("{memberId}")]
+
+        public async Task<IActionResult> GetMemberById(string memberId)
+        {
+            var member = await _memberService.GetMemberById(memberId);
+            return Ok(member);
+        }
+        [HttpGet("{memberId}/readlist")]
+        public async Task<IActionResult> GetAMembersReadList(string memberId)
+        {
+            var result = await _memberService.GetAMembersReadList(memberId);
+            return Ok(result);  
+        }
     }
 }
