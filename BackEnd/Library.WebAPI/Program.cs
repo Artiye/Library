@@ -70,6 +70,8 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
+builder.Services.AddScoped<IMemberService, MemberService>();    
+
 
 
 var app = builder.Build();
