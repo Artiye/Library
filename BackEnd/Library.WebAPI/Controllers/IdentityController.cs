@@ -40,6 +40,7 @@ namespace Library.WebAPI.Controllers
             return StatusCode(400, "Confirmation failed!");
         }
         [HttpPost("changerole")]
+        [Authorize(Roles = "Admin")]
         
         public async Task<IActionResult> ChangeUserRole(RoleChangeDTO dto)
         {

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240329143042_AddToDb3530")]
-    partial class AddToDb3530
+    [Migration("20240402123832_AddToDb211")]
+    partial class AddToDb211
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,7 +168,7 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = "adminuser123412903847192311234",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cfc951e6-c3ca-475e-9dcb-1623154b9899",
+                            ConcurrencyStamp = "37dd1d3f-b505-4b41-b037-e88952079b14",
                             Email = "artinjobro@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Art",
@@ -178,9 +178,9 @@ namespace Library.Infrastructure.Migrations
                             Nationality = "Kosovar",
                             NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
                             NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEj/UNogx/ojw+3XCEctVrBvMZVrn0PJBdBV+xRDIheUjqHxUi1eQZ45UxChxm4QzQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHgamQbZOb6nuZzYXdMGxOn9ahAh8o9VJWFH/qbI+Blg8NgzOI7iaBJ5zOehlz/qWg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "38ec6446-7baa-491f-8afa-57c8130ef329",
+                            SecurityStamp = "39acc57f-5931-4e17-966a-1b8e501af0bf",
                             TwoFactorEnabled = false,
                             UserName = "artinjobro@gmail.com"
                         });
@@ -193,6 +193,9 @@ namespace Library.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Biography")
                         .IsRequired()
@@ -217,6 +220,8 @@ namespace Library.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AuthorId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Authors");
                 });
@@ -554,6 +559,13 @@ namespace Library.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Library.Domain.Entity.Author", b =>
+                {
+                    b.HasOne("Library.Domain.Entity.ApplicationUser", null)
+                        .WithMany("Authors")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
             modelBuilder.Entity("Library.Domain.Entity.Book", b =>
                 {
                     b.HasOne("Library.Domain.Entity.ApplicationUser", null)
@@ -643,6 +655,8 @@ namespace Library.Infrastructure.Migrations
 
             modelBuilder.Entity("Library.Domain.Entity.ApplicationUser", b =>
                 {
+                    b.Navigation("Authors");
+
                     b.Navigation("Books");
 
                     b.Navigation("Clubs");

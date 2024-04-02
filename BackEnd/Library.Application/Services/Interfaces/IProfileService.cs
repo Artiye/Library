@@ -1,4 +1,5 @@
-﻿using Library.Application.DTOs.BookDTOs;
+﻿using Library.Application.DTOs.AuthorDTOs;
+using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
 using Library.Application.Responses;
 using Library.Domain.Entity;
@@ -23,6 +24,10 @@ namespace Library.Application.Services.Interfaces
         Task<ApiResponse> AddBookToReadList(int bookId);
 
         Task<List<GetBookDTO>> GetMyReadList();
+
+        Task<ApiResponse> AddAuthorToMyFavourites(int authorId);
+
+        Task<List<GetAuthorDTO>> GetMyFavouriteAuthors();
 
      }
 }

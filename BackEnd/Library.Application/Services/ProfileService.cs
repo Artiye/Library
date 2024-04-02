@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
 using Library.Application.RepositoryInterfaces;
@@ -25,14 +26,16 @@ namespace Library.Application.Services
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IBookRepository _bookRepository;
+        private readonly IAuthorRepository _authorRepository;
 
-        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IBookRepository bookRepository)
+        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IBookRepository bookRepository, IAuthorRepository authorRepository)
         {
             _httpContext = httpContext;
             _userManager = userManager;
             _mapper = mapper;
             _emailSender = emailSender;
             _bookRepository = bookRepository;
+            _authorRepository = authorRepository;
         }
 
         public async Task<ApiResponse> DeleteProfile(string password)
@@ -116,6 +119,9 @@ namespace Library.Application.Services
                 throw new Exception("User not authorized");
 
             var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User not found");
+
             var userDTO = _mapper.Map<GetProfileDTO>(user);
 
             return userDTO;
@@ -130,27 +136,22 @@ namespace Library.Application.Services
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return new ApiResponse(400, "User not found");
-
-            
+           
             var bookToAdd = await _bookRepository.GetBookById(bookId); 
             if (bookToAdd == null)
                 return new ApiResponse(400, "Book not found");
-
            
             await _userManager.Users.Include(u => u.Books).FirstOrDefaultAsync(u => u.Id == userId);
-
             
             if (!user.Books.Any(b => b.BookId == bookToAdd.BookId))
-            {
-                
+            {               
                 user.Books.Add(bookToAdd);
             }
             else
             {
                 return new ApiResponse(400, "Book already exists in the user list");
             }
-
-           
+            
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
@@ -160,6 +161,42 @@ namespace Library.Application.Services
             {
                 return new ApiResponse(400, "Failed to add book to read list");
             }
+        }
+
+        public async Task<ApiResponse> AddAuthorToMyFavourites(int authorId)
+        {
+            var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return new ApiResponse(400, "User not authorized");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new ApiResponse(400, "User not found");
+
+            var authorToAdd = await _authorRepository.GetAuthorById(authorId);
+            if (authorToAdd == null)
+                return new ApiResponse(400, "Author not found");
+
+            await _userManager.Users.Include(u => u.Authors).FirstOrDefaultAsync(u => u.Id == userId); 
+
+            if(!user.Authors.Any(u => u.AuthorId == authorToAdd.AuthorId))
+            {
+                user.Authors.Add(authorToAdd);
+            } else
+            {
+                return new ApiResponse(400, "Author already exists in the user favourites");
+            }
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return new ApiResponse(200, "Author added to favourites successfully");
+            }
+            else
+            {
+                return new ApiResponse(400, "Failed to add author to favourites");
+            }
+
+
         }
 
 
@@ -179,11 +216,31 @@ namespace Library.Application.Services
             var booksInReadList = user.Books;
 
             if (booksInReadList == null || booksInReadList.Count == 0)
-                throw new Exception("No books added");
+                return new List<GetBookDTO>();
 
             var booksDTO = _mapper.Map<List<GetBookDTO>>(booksInReadList);
 
             return booksDTO;
+        }
+        public async Task<List<GetAuthorDTO>> GetMyFavouriteAuthors()
+        {
+            var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                throw new Exception("User not authorized");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new Exception("User not found");
+
+            await _userManager.Users.Include(u => u.Authors).FirstOrDefaultAsync(u => u.Id == userId);
+
+            var authorsInFavourites = user.Authors;
+
+            if(authorsInFavourites == null || authorsInFavourites.Count == 0)
+                return new List<GetAuthorDTO>();
+
+            var authorsDTO = _mapper.Map<List<GetAuthorDTO>>(authorsInFavourites);
+            return authorsDTO;
         }
 
     }
