@@ -159,28 +159,6 @@ namespace Library.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "adminuser123412903847192311234",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "e74b0fd0-c2cc-487d-987e-99536833318c",
-                            Email = "artinjobro@gmail.com",
-                            EmailConfirmed = true,
-                            FirstName = "Art",
-                            Gender = "Male",
-                            LastName = "Morina",
-                            LockoutEnabled = false,
-                            Nationality = "Kosovar",
-                            NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
-                            NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFOgIRFufIGjuYpt66ofeeaJUQNDwlNUvLw+XIno8oOg1SPGkIUt2DCxv4IqrYLazw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "e2b94bbd-7263-42a2-aa7d-a0d2d1c08975",
-                            TwoFactorEnabled = false,
-                            UserName = "artinjobro@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Library.Domain.Entity.Author", b =>
@@ -367,20 +345,6 @@ namespace Library.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "adminRoleId1293931239438254523",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "userRoleId23094852091092347944",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -468,13 +432,6 @@ namespace Library.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "adminuser123412903847192311234",
-                            RoleId = "adminRoleId1293931239438254523"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
