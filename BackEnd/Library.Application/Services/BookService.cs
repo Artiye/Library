@@ -162,8 +162,6 @@ namespace Library.Application.Services
                 author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                 author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
             }
-
-
             return bookDTO;               
          }          
         
