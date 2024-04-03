@@ -33,5 +33,12 @@ namespace Library.WebAPI.Controllers
             var result = await _memberService.GetAMembersReadList(memberId);
             return Ok(result);  
         }
+        [HttpGet("{memberId}/favouriteAuthors")]
+
+        public async Task<IActionResult> GetAMembersFavouriteAuthors(string memberId)
+        {
+            var result = await _memberService.GetAMembersFavouriteAuthors(memberId);
+            return Ok(result);
+        }
     }
 }

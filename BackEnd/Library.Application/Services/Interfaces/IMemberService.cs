@@ -1,4 +1,5 @@
-﻿using Library.Application.DTOs.BookDTOs;
+﻿using Library.Application.DTOs.AuthorDTOs;
+using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
 using Library.Domain.Entity;
 using System;
@@ -16,5 +17,7 @@ namespace Library.Application.Services.Interfaces
         Task<GetProfileDTO> GetMemberById(string memberId);
 
         Task<List<GetBookDTO>> GetAMembersReadList(string memberId);
+
+        Task<List<GetAuthorDTO>> GetAMembersFavouriteAuthors(string memberId);
     }
 }
