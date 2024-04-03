@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
 using Library.Application.Services.Interfaces;
@@ -38,26 +39,6 @@ namespace Library.Application.Services
             return profilesDTO;
         }
 
-        public async Task<List<GetBookDTO>> GetAMembersReadList(string memberId)
-        {
-            var user = await _userManager.Users
-                .Include(u => u.Books)
-                .FirstOrDefaultAsync(u => u.Id == memberId); 
-            if (user == null)
-            {
-                throw new Exception("User does not exist");
-            }
-
-            if (user.Books == null || !user.Books.Any())
-            {
-                return new List<GetBookDTO>();
-            }
-
-            var readListDTO = _mapper.Map<List<GetBookDTO>>(user.Books);
-            return readListDTO;
-        }
-
-
         public async Task<GetProfileDTO> GetMemberById(string memberId)
         {
             var user = await _userManager.FindByIdAsync(memberId);
@@ -68,6 +49,40 @@ namespace Library.Application.Services
             var userDTO = _mapper.Map<GetProfileDTO>(user);
             return userDTO;
         }
+
+        public async Task<List<GetBookDTO>> GetAMembersReadList(string memberId)
+        {
+            var user = await _userManager.Users
+                .Include(u => u.Books)
+                .FirstOrDefaultAsync(u => u.Id == memberId); 
+            if (user == null)
+            {
+                throw new Exception("User does not exist");
+            }
+
+            if (user.Books == null || !user.Books.Any())           
+                return new List<GetBookDTO>();
+            
+
+            var readListDTO = _mapper.Map<List<GetBookDTO>>(user.Books);
+            return readListDTO;
+        }
+        
+        public async Task<List<GetAuthorDTO>> GetAMembersFavouriteAuthors(string memberId)
+        {
+            var user = await _userManager.Users
+                .Include(u => u.Authors)
+                .FirstOrDefaultAsync (u => u.Id == memberId);
+            if (user == null)
+                throw new Exception("User not found");
+
+            if (user.Authors == null || !user.Authors.Any())
+                return new List<GetAuthorDTO>();
+
+            var authorListDTO = _mapper.Map<List<GetAuthorDTO>>(user.Authors);
+            return authorListDTO;
+        }
+      
 
     }
 }
