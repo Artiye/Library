@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb720 : Migration
+    public partial class libdb2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -358,25 +356,6 @@ namespace Library.Infrastructure.Migrations
                         principalTable: "Clubs",
                         principalColumn: "BookClubId");
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "adminRoleId1293931239438254523", null, "Admin", "ADMIN" },
-                    { "userRoleId23094852091092347944", null, "User", "USER" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminuser123412903847192311234", 0, "e74b0fd0-c2cc-487d-987e-99536833318c", "artinjobro@gmail.com", true, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEFOgIRFufIGjuYpt66ofeeaJUQNDwlNUvLw+XIno8oOg1SPGkIUt2DCxv4IqrYLazw==", null, false, "e2b94bbd-7263-42a2-aa7d-a0d2d1c08975", false, "artinjobro@gmail.com" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "adminRoleId1293931239438254523", "adminuser123412903847192311234" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
