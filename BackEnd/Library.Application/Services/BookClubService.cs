@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookClubDTOs;
 using Library.Application.DTOs.BookClubJoinRequestDTO;
+using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.UserDTOs;
+using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
@@ -18,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository, IEmailSender emailSender) : IBookClubService
+    public class BookClubService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IBookClubRepository bookClubRepository, IMapper mapper, IAuthorRepository authorRepository, IBookRepository bookRepository, IEmailSender emailSender, IEncryptionService encryptionService) : IBookClubService
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
@@ -27,6 +31,7 @@ namespace Library.Application.Services
         private readonly IAuthorRepository _authorRepository = authorRepository;
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly IEmailSender _emailSender = emailSender;
+        private readonly IEncryptionService _encryptionService = encryptionService;
 
         public async Task<ApiResponse> AddAuthorToBookClub(int bookClubId, int authorId)
         {
@@ -65,6 +70,9 @@ namespace Library.Application.Services
                     return new ApiResponse(400, "User not authenticated");
 
                 var bookClub = _mapper.Map<BookClub>(dto);
+                bookClub.Name = _encryptionService.EncryptData(dto.Name);
+                bookClub.Description = _encryptionService.EncryptData(dto.Description);
+
                 bookClub.OwnerId = userId;
                 bookClub.OwnerEmail = userEmail;
 
@@ -118,7 +126,7 @@ namespace Library.Application.Services
                     return new ApiResponse(400, "Only the owner can delete this bookclub");
 
                 await _bookClubRepository.DeleteBookClub(bookClub);
-                return new ApiResponse(200, "Deleted Book");
+                return new ApiResponse(200, "Deleted BookClub");
             }
             return new ApiResponse(400, "Failed to delete");
 
@@ -144,8 +152,8 @@ namespace Library.Application.Services
                 if (string.IsNullOrEmpty(dto.Description) && string.IsNullOrEmpty(dto.Name))
                     return new ApiResponse(400, "Do not leave inputs blank");
 
-                bookClub.Description = dto.Description;
-                bookClub.Name = dto.Name;
+                bookClub.Name = _encryptionService.EncryptData(dto.Name);
+                bookClub.Description = _encryptionService.EncryptData(dto.Description);
 
                 await _bookClubRepository.EditBookClub(bookClub);
                 return new ApiResponse(200, "Edited successfully");
@@ -160,21 +168,28 @@ namespace Library.Application.Services
                 throw new Exception("id cannot be 0");
             }
             var bookClub = await _bookClubRepository.GetBookClubById(id) ?? throw new Exception($"BookClub with id {id} does not exist");
-            var bookClubDto = _mapper.Map<GetBookClubDTO>(bookClub);
-            return bookClubDto;
+            var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
+            bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
+            bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
+
+            return bookClubDTO;
         }
 
 
 
         public async Task<GetBookClubDTO> GetBookClubByName(string name)
         {
-            if (name == null)
+            var encryptedName = _encryptionService.EncryptData(name);
+
+            if (encryptedName == null)
             {
                 throw new Exception("Name cannot be null");
             }
-            var bookClub = await _bookClubRepository.GetBookClubByName(name) ?? throw new Exception($"Bookclub with the name {name} does not exist");
-            var bookClubDto = _mapper.Map<GetBookClubDTO>(bookClub);
-            return bookClubDto;
+            var bookClub = await _bookClubRepository.GetBookClubByName(encryptedName) ?? throw new Exception($"Bookclub with the name {encryptedName} does not exist");
+            var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
+            bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
+            bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
+            return bookClubDTO;
         }
 
         public async Task<List<GetBookClubDTO>> GetBookClubByLanguage(string language)
@@ -188,6 +203,12 @@ namespace Library.Application.Services
                 throw new Exception($"Books with that language {language} do not exist");
 
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
+            foreach(GetBookClubDTO bookClubs in bookClubList)
+            {
+                bookClubs.Name = _encryptionService.DecryptData(bookClubs.Name);
+                bookClubs.Description = _encryptionService.DecryptData(bookClubs.Description);
+            }
+
             return bookClubList;
         }
 
@@ -202,6 +223,11 @@ namespace Library.Application.Services
                 throw new Exception($"Books with that genre {genre} do not exist");
 
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
+            foreach (GetBookClubDTO bookClubs in bookClubList)
+            {
+                bookClubs.Name = _encryptionService.DecryptData(bookClubs.Name);
+                bookClubs.Description = _encryptionService.DecryptData(bookClubs.Description);
+            }
             return bookClubList;
         }
 
@@ -210,6 +236,35 @@ namespace Library.Application.Services
         {
             var bookClub = await _bookClubRepository.GetAllBookClubs();
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
+            foreach(GetBookClubDTO bookClubs in bookClubList)
+            {
+                bookClubs.Name = _encryptionService.DecryptData(bookClubs.Name);
+                bookClubs.Description = _encryptionService.DecryptData(bookClubs.Description);
+
+
+                foreach(GetOnlyAuthorDTO bookClubsAuthors in bookClubs.Authors)
+                {
+                    bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
+                    bookClubsAuthors.Nationality = _encryptionService.DecryptData(bookClubsAuthors.Nationality);
+                    bookClubsAuthors.BioGraphy = _encryptionService.DecryptData(bookClubsAuthors.BioGraphy);
+                    bookClubsAuthors.ProfileImage = _encryptionService.DecryptData(bookClubsAuthors.ProfileImage);
+                }
+
+                foreach(GetOnlyBookDTO bookClubsBooks in bookClubs.Books)
+                {
+                    bookClubsBooks.Title = _encryptionService.DecryptData(bookClubsBooks.Title);
+                    bookClubsBooks.Description = _encryptionService.DecryptData(bookClubsBooks.Description);
+                    bookClubsBooks.CoverImage = _encryptionService.DecryptData(bookClubsBooks.CoverImage);
+                }
+               
+               foreach(GetUserDTO bookClubsUsers in bookClubs.Members)
+                {
+                    bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
+                    bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
+                }
+
+                
+            }
             return bookClubList;
         }
 
