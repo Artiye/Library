@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
@@ -15,11 +16,12 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository) : IBookService
+    public class BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository, IEncryptionService encryptionService) : IBookService
     {
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly IMapper _mapper = mapper;
         private readonly IAuthorRepository _authorRepository = authorRepository;
+        private readonly IEncryptionService _encryptionService = encryptionService;
 
         public async Task<ApiResponse> AddBook(AddBookDTO dto)
         {
@@ -32,6 +34,9 @@ namespace Library.Application.Services
                 try
                 {
                     var book = _mapper.Map<Book>(dto);
+                    book.Title = _encryptionService.EncryptData(dto.Title);
+                    book.Description = _encryptionService.EncryptData(dto.Description);
+                    book.CoverImage = _encryptionService.EncryptData(dto.CoverImage);
                     book.Authors ??= new List<Author>();
 
                     foreach (var authorId in dto.AuthorIds)
@@ -82,9 +87,9 @@ namespace Library.Application.Services
                 if (string.IsNullOrEmpty(dto.Title) && string.IsNullOrEmpty(dto.Description) && string.IsNullOrEmpty(dto.CoverImage))
                     return new ApiResponse(400, "Don't leave inputs blank");
 
-                book.Title = dto.Title;
-                book.Description = dto.Description;
-                book.CoverImage = dto.CoverImage;
+                book.Title = _encryptionService.EncryptData(dto.Title);
+                book.Description = _encryptionService.EncryptData(dto.Description);
+                book.CoverImage = _encryptionService.EncryptData(dto.CoverImage);
 
                 await _bookRepository.EditBook(book);
                 return new ApiResponse(200, "Edited successfully");
@@ -100,7 +105,14 @@ namespace Library.Application.Services
             }
                 var book = await _bookRepository.GetBookById(bookId) ?? throw new Exception($"Author with that book id {bookId} does not exist");
                 var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(book.Authors);
-                return authorDTO;                
+            foreach (GetOnlyAuthorDTO author1 in authorDTO)
+            {
+                author1.BioGraphy = _encryptionService.DecryptData(author1.BioGraphy);
+                author1.FullName = _encryptionService.DecryptData(author1.FullName);
+                author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
+                author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
+            }
+            return authorDTO;                
          }
             
         
@@ -113,6 +125,18 @@ namespace Library.Application.Services
             }
                 var book = await _bookRepository.GetBookById(id) ?? throw new Exception($"Book with that id {id} does not exist");
                 var bookDTO = _mapper.Map<GetBookDTO>(book);
+                bookDTO.Title = _encryptionService.DecryptData(book.Title);
+                bookDTO.Description = _encryptionService.DecryptData(book.Description);
+                bookDTO.CoverImage = _encryptionService.DecryptData(book.CoverImage);
+
+                 foreach(var author1 in bookDTO.Authors)
+                {
+                    author1.BioGraphy = _encryptionService.DecryptData(author1.BioGraphy);
+                    author1.FullName = _encryptionService.DecryptData(author1.FullName);
+                    author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
+                    author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
+                }
+
                 return bookDTO ?? throw new Exception($"Book with that id {id} does not exist");                
         }
            
@@ -120,12 +144,26 @@ namespace Library.Application.Services
 
         public async Task<GetBookDTO> GetBookByTitle(string title)
         {
-            if (title == null)
+            var encryptedTitle = _encryptionService.EncryptData(title);
+            if (encryptedTitle == null)
             {
                 throw new Exception("Title cannot be null");
             }
-            var book = await _bookRepository.GetBookByTitle(title) ?? throw new Exception($"Book with that title {title} does not exist");
+            var book = await _bookRepository.GetBookByTitle(encryptedTitle) ?? throw new Exception($"Book with that title {encryptedTitle} does not exist");
             var bookDTO = _mapper.Map<GetBookDTO>(book);
+            bookDTO.Title = _encryptionService.DecryptData(book.Title);
+            bookDTO.Description = _encryptionService.DecryptData(book.Description);
+            bookDTO.CoverImage = _encryptionService.DecryptData(book.CoverImage);
+
+            foreach (var author1 in bookDTO.Authors)
+            {
+                author1.BioGraphy = _encryptionService.DecryptData(author1.BioGraphy);
+                author1.FullName = _encryptionService.DecryptData(author1.FullName);
+                author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
+                author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
+            }
+
+
             return bookDTO;               
          }          
         
@@ -135,6 +173,16 @@ namespace Library.Application.Services
         {
             var book = await _bookRepository.GetAllBooks();
             var bookList = _mapper.Map<List<GetBookDTO>>(book);
+            foreach(GetBookDTO books in bookList)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+
+                books.Authors = await GetAuthorOfABook(books.BookId);
+            }
+           
+
             return bookList;
         }
         public async Task<List<GetBookDTO>> GetBooksByLanguage(string language)
@@ -149,6 +197,13 @@ namespace Library.Application.Services
                 throw new Exception($"Books with language {language} do not exist");
             
             var bookList = _mapper.Map<List<GetBookDTO>>(book);
+            foreach (GetBookDTO books in bookList)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+            }
+
             return bookList;
         }
         public async Task<List<GetBookDTO>> GetBooksByGenre(string genre) { 
@@ -163,6 +218,12 @@ namespace Library.Application.Services
                 throw new Exception($"Books with that genre {genre} do not exist");
 
             var bookList = _mapper.Map<List<GetBookDTO>>(book);
+            foreach (GetBookDTO books in bookList)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+            }
             return bookList;
         
         }      

@@ -1,3 +1,4 @@
+using Library.Application.Encryption;
 using Library.Application.Options;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Services;
@@ -54,6 +55,8 @@ builder.Services.AddTransient<IEmailSender, EmailSenderService>();
 builder.Services.Configure<EmailOptions>(
 builder.Configuration.GetSection(EmailOptions.EmailSender));
 
+builder.Services.Configure<EncryptionSettings>(builder.Configuration.GetSection("EncryptionSettings"));
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -71,6 +74,8 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddScoped<IMemberService, MemberService>();    
+
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 
 
 

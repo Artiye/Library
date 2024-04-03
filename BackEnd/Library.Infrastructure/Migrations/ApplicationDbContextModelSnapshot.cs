@@ -165,7 +165,7 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = "adminuser123412903847192311234",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "37dd1d3f-b505-4b41-b037-e88952079b14",
+                            ConcurrencyStamp = "e74b0fd0-c2cc-487d-987e-99536833318c",
                             Email = "artinjobro@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Art",
@@ -175,9 +175,9 @@ namespace Library.Infrastructure.Migrations
                             Nationality = "Kosovar",
                             NormalizedEmail = "ARTINJOBRO@GMAIL.COM",
                             NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHgamQbZOb6nuZzYXdMGxOn9ahAh8o9VJWFH/qbI+Blg8NgzOI7iaBJ5zOehlz/qWg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFOgIRFufIGjuYpt66ofeeaJUQNDwlNUvLw+XIno8oOg1SPGkIUt2DCxv4IqrYLazw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "39acc57f-5931-4e17-966a-1b8e501af0bf",
+                            SecurityStamp = "e2b94bbd-7263-42a2-aa7d-a0d2d1c08975",
                             TwoFactorEnabled = false,
                             UserName = "artinjobro@gmail.com"
                         });
