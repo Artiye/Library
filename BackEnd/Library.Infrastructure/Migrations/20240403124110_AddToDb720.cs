@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb211 : Migration
+    public partial class AddToDb720 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -371,7 +371,7 @@ namespace Library.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminuser123412903847192311234", 0, "37dd1d3f-b505-4b41-b037-e88952079b14", "artinjobro@gmail.com", true, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEHgamQbZOb6nuZzYXdMGxOn9ahAh8o9VJWFH/qbI+Blg8NgzOI7iaBJ5zOehlz/qWg==", null, false, "39acc57f-5931-4e17-966a-1b8e501af0bf", false, "artinjobro@gmail.com" });
+                values: new object[] { "adminuser123412903847192311234", 0, "e74b0fd0-c2cc-487d-987e-99536833318c", "artinjobro@gmail.com", true, "Art", "Male", "Morina", false, null, "Kosovar", "ARTINJOBRO@GMAIL.COM", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEFOgIRFufIGjuYpt66ofeeaJUQNDwlNUvLw+XIno8oOg1SPGkIUt2DCxv4IqrYLazw==", null, false, "e2b94bbd-7263-42a2-aa7d-a0d2d1c08975", false, "artinjobro@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

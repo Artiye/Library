@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
+using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
@@ -14,11 +15,12 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository) : IAuthorService
+    public class AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository, IEncryptionService encryptionService) : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository = authorRepository;
         private readonly IMapper _mapper = mapper;
         private readonly IBookRepository _bookRepository = bookRepository;
+        private readonly IEncryptionService _encryptionService = encryptionService;
 
         public async Task<ApiResponse> AddAuthor(AddAuthorDTO dto)
         {
@@ -29,6 +31,11 @@ namespace Library.Application.Services
 
                 
                 var author = _mapper.Map<Author>(dto);
+
+                author.FullName = _encryptionService.EncryptData(dto.FullName);
+                author.Biography = _encryptionService.EncryptData(dto.BioGraphy);
+                author.Nationality = _encryptionService.EncryptData(dto.Nationality);
+                author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
 
                 await _authorRepository.AddAuthor(author);
                 return new ApiResponse(200, "Added author successfully");
@@ -85,10 +92,10 @@ namespace Library.Application.Services
                 if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.Biography))
                     return new ApiResponse(400, "Do not leave empty or null strings");
 
-                author.Biography = dto.Biography;
-                author.FullName = dto.FullName;
-                author.Nationality = dto.Nationality;               
-                author.ProfileImage = dto.ProfileImage;
+                author.Biography = _encryptionService.EncryptData(dto.Biography);
+                author.FullName = _encryptionService.EncryptData(dto.FullName);
+                author.Nationality = _encryptionService.EncryptData(dto.Nationality);               
+                author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
 
                 await _authorRepository.EditAuthor(author);
                 return new ApiResponse(200, "Edited author successfully");
@@ -99,8 +106,17 @@ namespace Library.Application.Services
 
         public async Task<List<GetAuthorDTO>> GetAllAuthors()
         {
-            var author = await _authorRepository.GetAllAuthorList();
+            var author = await _authorRepository.GetAllAuthorList();            
             var authorList = _mapper.Map<List<GetAuthorDTO>>(author);
+            foreach(GetAuthorDTO author1 in authorList)
+            {
+                author1.BioGraphy = _encryptionService.DecryptData(author1.BioGraphy);
+                author1.FullName = _encryptionService.DecryptData(author1.FullName);
+                author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
+                author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
+            }
+
+            
             return authorList;
         }
 
@@ -113,17 +129,26 @@ namespace Library.Application.Services
 
             var author = await _authorRepository.GetAuthorById(id) ?? throw new Exception($"Author with id {id} does not exist");
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
+            authorDTO.BioGraphy = _encryptionService.DecryptData(author.Biography);
+            authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
+            authorDTO.Nationality = _encryptionService.DecryptData(author.Nationality);
+            authorDTO.ProfileImage = _encryptionService.DecryptData(author.ProfileImage);
             return authorDTO;
         }
 
         public async Task<GetAuthorDTO> GetAuthorByName(string name)
         {
-            if (name == null)
+            var encryptedName = _encryptionService.EncryptData(name);
+            if (encryptedName == null)
             {
                 throw new Exception("Name cannot be null");
             }
-            var author = await _authorRepository.GetAuthorByName(name) ?? throw new Exception($"Author with that name {name} does not exist");
+            var author = await _authorRepository.GetAuthorByName(encryptedName) ?? throw new Exception($"Author with that name {encryptedName} does not exist");
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
+            authorDTO.BioGraphy = _encryptionService.DecryptData(author.Biography);
+            authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
+            authorDTO.Nationality = _encryptionService.DecryptData(author.Nationality);
+            authorDTO.ProfileImage = _encryptionService.DecryptData(author.ProfileImage);
             return authorDTO;                          
         }
 
@@ -134,6 +159,12 @@ namespace Library.Application.Services
                 throw new Exception("Author id cannot be 0");
             }
             var books = await _authorRepository.GetBooksByAuthorId(authorId) ?? throw new Exception($"Author with id {authorId} does not exist");
+            foreach(Book book in books)
+            {
+                book.Title = _encryptionService.DecryptData(book.Title);
+                book.Description = _encryptionService.DecryptData(book.Description);
+                book.CoverImage = _encryptionService.DecryptData(book.CoverImage);
+            }
             return books;
             }
            
