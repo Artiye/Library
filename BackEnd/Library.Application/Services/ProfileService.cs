@@ -2,6 +2,7 @@
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
+using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
@@ -27,8 +28,9 @@ namespace Library.Application.Services
         private readonly IEmailSender _emailSender;
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IEncryptionService _encryptionService;
 
-        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IBookRepository bookRepository, IAuthorRepository authorRepository)
+        public ProfileService(IHttpContextAccessor httpContext, UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IBookRepository bookRepository, IAuthorRepository authorRepository, IEncryptionService encryptionService)
         {
             _httpContext = httpContext;
             _userManager = userManager;
@@ -36,6 +38,7 @@ namespace Library.Application.Services
             _emailSender = emailSender;
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
+            _encryptionService = encryptionService;
         }
 
         public async Task<ApiResponse> DeleteProfile(string password)
@@ -51,9 +54,10 @@ namespace Library.Application.Services
             var validPassword = await _userManager.CheckPasswordAsync(user, password);
             if (!validPassword)
                 return new ApiResponse(400, "Password is not valid");
+            var userEmail = _encryptionService.DecryptData(user.Email);
 
             var confirmationLink = $"https://localhost:7278/api/Profile/confirm-delete?userId={user.Id}";
-            await _emailSender.SendEmailAsync(user.Email, "Confirm account deletion",
+            await _emailSender.SendEmailAsync(userEmail, "Confirm account deletion",
                 $"To confirm the deletion of your account, click <a href='{confirmationLink}'>here</a>.");
 
            
@@ -101,10 +105,10 @@ namespace Library.Application.Services
                 if(dto.FirstName == user.FirstName && dto.LastName == user.LastName && dto.Nationality == user.Nationality && dto.Gender == user.Gender) {
                     return new ApiResponse(400, "No changes have been made");
                 }
-                user.FirstName = dto.FirstName;
-                user.LastName = dto.LastName;
-                user.Nationality = dto.Nationality;
-                user.Gender = dto.Gender;
+                user.FirstName = _encryptionService.EncryptData(dto.FirstName);
+                user.LastName = _encryptionService.EncryptData(dto.LastName);
+                user.Nationality = _encryptionService.EncryptData(dto.Nationality);
+                user.Gender = _encryptionService.EncryptData(dto.Gender);
 
                 await _userManager.UpdateAsync(user);
                 return new ApiResponse(200, "Profile edited successfully");
@@ -123,6 +127,11 @@ namespace Library.Application.Services
                 throw new InvalidOperationException("User not found");
 
             var userDTO = _mapper.Map<GetProfileDTO>(user);
+            userDTO.FirstName = _encryptionService.DecryptData(userDTO.FirstName);
+            userDTO.LastName = _encryptionService.DecryptData(userDTO.LastName);
+            userDTO.Gender = _encryptionService.DecryptData(userDTO.Gender);
+            userDTO.Nationality = _encryptionService.DecryptData(userDTO.Nationality);
+
 
             return userDTO;
         }
@@ -219,6 +228,12 @@ namespace Library.Application.Services
                 return new List<GetBookDTO>();
 
             var booksDTO = _mapper.Map<List<GetBookDTO>>(booksInReadList);
+            foreach(GetBookDTO books in booksDTO)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+            }
 
             return booksDTO;
         }
@@ -240,6 +255,13 @@ namespace Library.Application.Services
                 return new List<GetAuthorDTO>();
 
             var authorsDTO = _mapper.Map<List<GetAuthorDTO>>(authorsInFavourites);
+            foreach(GetAuthorDTO authors in authorsDTO)
+            {
+                authors.FullName = _encryptionService.DecryptData(authors.FullName);
+                authors.Nationality = _encryptionService.DecryptData(authors.Nationality);
+                authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
+                authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
+            }
             return authorsDTO;
         }
 
