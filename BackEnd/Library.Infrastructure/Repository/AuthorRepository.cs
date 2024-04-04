@@ -1,4 +1,6 @@
-﻿using Library.Application.RepositoryInterfaces;
+﻿using AutoMapper;
+using Library.Application.DTOs.BookDTOs;
+using Library.Application.RepositoryInterfaces;
 using Library.Domain.Entity;
 using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repository
 {
-    public class AuthorRepository(ApplicationDbContext context) : IAuthorRepository
+    public class AuthorRepository(ApplicationDbContext context, IMapper mapper) : IAuthorRepository
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<Author> AddAuthor(Author author)
         {
@@ -55,16 +58,21 @@ namespace Library.Infrastructure.Repository
             return author;
         }
 
-        public async Task<List<Book>> GetBooksByAuthorId(int authorId)
+        public async Task<List<GetBookDTO>> GetBooksByAuthorId(int authorId)
         {
             var author = await _context.Authors
                 .Include(a => a.Books)
                 .FirstOrDefaultAsync(a => a.AuthorId == authorId);
 
             if (author != null)
-                return author.Books.ToList();
+            {
+                
+                var booksDto = _mapper.Map<List<GetBookDTO>>(author.Books);
+                return booksDto;
+            }
 
-            return [];
+            
+            return new List<GetBookDTO>();
         }
     }
 }

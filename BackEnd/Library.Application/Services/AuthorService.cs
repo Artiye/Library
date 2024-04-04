@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
+using Library.Application.DTOs.BookDTOs;
 using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
@@ -114,6 +115,14 @@ namespace Library.Application.Services
                 author1.FullName = _encryptionService.DecryptData(author1.FullName);
                 author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                 author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
+
+
+                foreach(GetOnlyBookDTO books in author1.Books)
+                {
+                    books.Title = _encryptionService.DecryptData(books.Title);
+                    books.Description = _encryptionService.DecryptData(books.Description);
+                    books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+                }
             }
 
             
@@ -133,6 +142,13 @@ namespace Library.Application.Services
             authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
             authorDTO.Nationality = _encryptionService.DecryptData(author.Nationality);
             authorDTO.ProfileImage = _encryptionService.DecryptData(author.ProfileImage);
+
+            foreach(GetOnlyBookDTO books in authorDTO.Books)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+            }
             return authorDTO;
         }
 
@@ -149,24 +165,38 @@ namespace Library.Application.Services
             authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
             authorDTO.Nationality = _encryptionService.DecryptData(author.Nationality);
             authorDTO.ProfileImage = _encryptionService.DecryptData(author.ProfileImage);
+            foreach (GetOnlyBookDTO books in authorDTO.Books)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+            }
             return authorDTO;                          
         }
 
-        public async Task<List<Book>> GetBooksByAuthorId(int authorId)
+        public async Task<List<GetBookDTO>> GetBooksByAuthorId(int authorId)
         {
             if (authorId == 0)
             {
                 throw new Exception("Author id cannot be 0");
             }
             var books = await _authorRepository.GetBooksByAuthorId(authorId) ?? throw new Exception($"Author with id {authorId} does not exist");
-            foreach(Book book in books)
+            foreach(GetBookDTO book in books)
             {
                 book.Title = _encryptionService.DecryptData(book.Title);
                 book.Description = _encryptionService.DecryptData(book.Description);
                 book.CoverImage = _encryptionService.DecryptData(book.CoverImage);
+
+                foreach(GetOnlyAuthorDTO authors in book.Authors)
+                {
+                    authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
+                    authors.FullName = _encryptionService.DecryptData(authors.FullName);
+                    authors.Nationality = _encryptionService.DecryptData(authors.Nationality);
+                    authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
+                }
             }
             return books;
-            }
+        }
            
         
 
