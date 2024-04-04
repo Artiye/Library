@@ -60,8 +60,10 @@ namespace Library.Application.Services
             identityUser.Email = _encryptionService.EncryptData(dto.Email);
             identityUser.FirstName = _encryptionService.EncryptData(dto.FirstName);
             identityUser.LastName = _encryptionService.EncryptData(dto.LastName);
-            identityUser.Gender = _encryptionService.EncryptData(dto.Gender);
+            identityUser.Gender = _encryptionService.EncryptData(dto.Gender);           
             identityUser.Nationality = _encryptionService.EncryptData(dto.Nationality);
+
+
             identityUser.UserName = dto.Email;
 
             var result = await _userManager.CreateAsync(identityUser, dto.Password);

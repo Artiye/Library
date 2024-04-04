@@ -413,6 +413,7 @@ namespace Library.Application.Services
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return new ApiResponse(400, "User not authenticated");
+            reason = _encryptionService.EncryptData(reason);
 
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             if (bookClub == null)
@@ -585,6 +586,7 @@ namespace Library.Application.Services
             {
                 joinRequest.FirstName = _encryptionService.DecryptData(joinRequest.FirstName);
                 joinRequest.LastName = _encryptionService.DecryptData(joinRequest.LastName);
+                joinRequest.Reason = _encryptionService.DecryptData(joinRequest.Reason);
             }
 
 
