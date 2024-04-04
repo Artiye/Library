@@ -20,13 +20,14 @@ namespace Library.Infrastructure.Data.DataSeed
         }
         public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder)
         {
+           
             builder.HasData(
                 new IdentityUserRole<string>
                 {
                     UserId = "adminuser123412903847192311234",
                     RoleId = "adminRoleId1293931239438254523",
 
-                    
+
                 }
             );
 

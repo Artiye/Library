@@ -25,7 +25,7 @@ namespace Library.Infrastructure.Data.DataSeed
 
             builder.HasData(new ApplicationUser
             {
-                Id = _encryptionService.EncryptData("adminuser123412903847192311234"),
+                Id ="adminuser123412903847192311234",
                 FirstName = _encryptionService.EncryptData("Art"),
                 LastName = _encryptionService.EncryptData("Morina"),
                 Gender = _encryptionService.EncryptData("Male"),
@@ -35,7 +35,7 @@ namespace Library.Infrastructure.Data.DataSeed
                 Email = _encryptionService.EncryptData("artinjobro@gmail.com"),
                 NormalizedEmail = _encryptionService.EncryptData("ARTINJOBRO@GMAIL.COM"),
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, _encryptionService.EncryptData("Artmorina.1")),
+                PasswordHash = hasher.HashPassword(null, "Artmorina.1"),
                 SecurityStamp = Guid.NewGuid().ToString(),
             });
         }

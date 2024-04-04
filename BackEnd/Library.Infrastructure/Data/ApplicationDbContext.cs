@@ -1,41 +1,41 @@
-﻿using Library.Domain.Entity;
+﻿using Library.Application.Encryption;
+using Library.Domain.Entity;
+using Library.Infrastructure.Data.DataSeed;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-
 
 namespace Library.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options) { }
-        
-            public DbSet<Author> Authors { get; set; }
+        private readonly IEncryptionService _encryptionService;
 
-            public DbSet<Book> Books {  get; set; }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IEncryptionService encryptionService)
+            : base(options)
+        {
+            _encryptionService = encryptionService;
+        }
 
-            public DbSet<BookClub> Clubs { get; set; }
+        public DbSet<Author> Authors { get; set; }
 
-            public DbSet<BookClubJoinRequest> JoinRequests { get; set; }
+        public DbSet<Book> Books { get; set; }
 
-            
+        public DbSet<BookClub> Clubs { get; set; }
+
+        public DbSet<BookClubJoinRequest> JoinRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfiguration(new IdentityUserConfiguration(_encryptionService));
+            modelBuilder.ApplyConfiguration(new IdentityUserRoleConfiguration(_encryptionService));
+            modelBuilder.ApplyConfiguration(new IdentityRoleConfiguration(_encryptionService));
 
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new BookClubConfiguration());
             modelBuilder.ApplyConfiguration(new BookClubJoinRequestConfiguration());
         }
-
-
     }
 }
