@@ -20,9 +20,10 @@ namespace Library.Infrastructure.Data.DataSeed
         }
         public void Configure(EntityTypeBuilder<IdentityRole> builder)
         {
-            builder.HasData(
-                new IdentityRole { Id = _encryptionService.EncryptData("adminRoleId1293931239438254523"), Name = "Admin", NormalizedName ="ADMIN" },
-                new IdentityRole { Id = _encryptionService.EncryptData("userRoleId23094852091092347944"), Name = "User", NormalizedName = "USER" }
+            
+          builder.HasData(
+                new IdentityRole { Id = "adminRoleId1293931239438254523", Name = "Admin", NormalizedName ="ADMIN" },
+                new IdentityRole { Id = "userRoleId23094852091092347944", Name = "User", NormalizedName = "USER" }
 
                 
             );

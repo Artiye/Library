@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class libdb2 : Migration
+    public partial class AddToDb306 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -356,6 +358,25 @@ namespace Library.Infrastructure.Migrations
                         principalTable: "Clubs",
                         principalColumn: "BookClubId");
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "adminRoleId1293931239438254523", null, "Admin", "ADMIN" },
+                    { "userRoleId23094852091092347944", null, "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "adminuser123412903847192311234", 0, "61323d63-69ca-4b0b-8f21-3d46159e4a93", "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=", true, "u9AWyUnjf7jztE2k6G7bSA==", "pj2qf8wIy62RLNJ+1hXIKw==", "DlK7w9SeYV9y3UgPKw4VJg==", false, null, "/s7OzCfLH5QLPCm5zAaSlg==", "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=", "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=", "AQAAAAIAAYagAAAAEBBF2OVhkXaGXvWPVNWtxA/fCB5/ONpwdh/hsrO0eUM6yLluNh4J3SlGuZyr0SXycQ==", null, false, "a7702c89-deec-4e58-a34e-622936d89245", false, "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "adminRoleId1293931239438254523", "adminuser123412903847192311234" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

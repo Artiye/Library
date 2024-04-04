@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.IdentityDTOs;
+using Library.Application.Encryption;
 using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
@@ -18,6 +19,7 @@ namespace Library.Application.Services
 {
     public class IdentityService : IIdentityService
     {
+        private readonly IEncryptionService _encryptionService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
@@ -25,8 +27,9 @@ namespace Library.Application.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContext;
 
-        public IdentityService(UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContext)
+        public IdentityService(IEncryptionService encryptionService,UserManager<ApplicationUser> userManager, IMapper mapper, IEmailSender emailSender, IEmailSenderService emailSenderService, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContext)
         {
+            _encryptionService = encryptionService;
             _userManager = userManager;
             _mapper = mapper;
             _emailSender = emailSender;
@@ -54,11 +57,18 @@ namespace Library.Application.Services
                 return new ApiResponse(400, "Password and Confirm Password do not Match.");
 
             var identityUser = _mapper.Map<ApplicationUser>(dto);
+            identityUser.Email = _encryptionService.EncryptData(dto.Email);
+            identityUser.FirstName = _encryptionService.EncryptData(dto.FirstName);
+            identityUser.LastName = _encryptionService.EncryptData(dto.LastName);
+            identityUser.Gender = _encryptionService.EncryptData(dto.Gender);
+            identityUser.Nationality = _encryptionService.EncryptData(dto.Nationality);
+            
             identityUser.UserName = dto.Email;
             var result = await _userManager.CreateAsync(identityUser, dto.Password);
             if (!result.Succeeded)
                 return new ApiResponse(400, "Something went Wrong.");
 
+          
             
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             string url =  "https://localhost:7278/api/Identity/ConfirmEmail?email=" + identityUser.Email;
