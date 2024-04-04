@@ -265,5 +265,44 @@ namespace Library.Application.Services
             return authorsDTO;
         }
 
+        public async Task<ApiResponse> RemoveAuthorFromMyFavourites(int authorId)
+        {
+            var memberId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (memberId == null)
+                return new ApiResponse(400, "User not authorized");
+
+            var user = await _userManager.FindByIdAsync(memberId);
+            
+
+            var author = await _authorRepository.GetAuthorById(authorId);
+            if (user != null && author != null)
+            {
+                user.Authors ??= new List<Author>();
+                user.Authors.Remove(author);
+                await _userManager.UpdateAsync(user);
+                return new ApiResponse(200, "Removed Author from booklist");
+            }
+            return new ApiResponse(400, "Failed to remove author from your favourites");
+        }
+
+        public async Task<ApiResponse> RemoveBookFromReadList(int bookId)
+        {
+            var memberId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (memberId == null)
+                return new ApiResponse(400, "User not authorized");
+
+            var user = await _userManager.FindByIdAsync(memberId);
+            var book = await _bookRepository.GetBookById(bookId);
+           
+            if(user != null && book != null)
+            {
+                user.Books ??= new List<Book>();
+                user.Books.Remove(book);
+                await _userManager.UpdateAsync(user);
+                return new ApiResponse(200, "Removed book from booklist");
+            }
+          
+            return new ApiResponse(400, "Failed to remove book from readlist");
+        }
     }
 }

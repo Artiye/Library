@@ -1,5 +1,7 @@
 ﻿using Library.Application.DTOs.ProfileDTOs;
+using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
+using Library.Domain.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,5 +75,19 @@ namespace Library.WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPut("remove-book-from-read-list")]
+        public async Task<IActionResult> RemoveBookFromReadList(int bookId)
+        {
+            var result = await _profileService.RemoveBookFromReadList(bookId);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+        [HttpPut("remove-author-from-favourites")]
+
+        public async Task<IActionResult> RemoveAuthorFromFavourites(int authorId)
+        {
+            var result = await _profileService.RemoveAuthorFromMyFavourites(authorId);
+            return result.Status == 200 ? Ok(result) : BadRequest(result);
+        }
+        
     }
 }

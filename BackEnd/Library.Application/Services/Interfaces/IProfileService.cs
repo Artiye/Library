@@ -29,5 +29,8 @@ namespace Library.Application.Services.Interfaces
 
         Task<List<GetAuthorDTO>> GetMyFavouriteAuthors();
 
+        Task<ApiResponse> RemoveAuthorFromMyFavourites(int authorId);
+
+        Task<ApiResponse> RemoveBookFromReadList(int bookId);   
      }
 }
