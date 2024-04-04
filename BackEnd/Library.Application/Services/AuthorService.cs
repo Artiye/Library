@@ -159,7 +159,7 @@ namespace Library.Application.Services
             {
                 throw new Exception("Name cannot be null");
             }
-            var author = await _authorRepository.GetAuthorByName(encryptedName) ?? throw new Exception($"Author with that name {encryptedName} does not exist");
+            var author = await _authorRepository.GetAuthorByName(encryptedName) ?? throw new Exception($"Author with that name {name} does not exist");
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
             authorDTO.BioGraphy = _encryptionService.DecryptData(author.Biography);
             authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
@@ -180,7 +180,7 @@ namespace Library.Application.Services
             {
                 throw new Exception("Author id cannot be 0");
             }
-            var books = await _authorRepository.GetBooksByAuthorId(authorId) ?? throw new Exception($"Author with id {authorId} does not exist");
+            var books = await _authorRepository.GetBooksByAuthorId(authorId);
             foreach(GetBookDTO book in books)
             {
                 book.Title = _encryptionService.DecryptData(book.Title);
