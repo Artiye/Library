@@ -149,7 +149,7 @@ namespace Library.Application.Services
             {
                 throw new Exception("Title cannot be null");
             }
-            var book = await _bookRepository.GetBookByTitle(encryptedTitle) ?? throw new Exception($"Book with that title {encryptedTitle} does not exist");
+            var book = await _bookRepository.GetBookByTitle(encryptedTitle) ?? throw new Exception($"Book with that title {title} does not exist");
             var bookDTO = _mapper.Map<GetBookDTO>(book);
             bookDTO.Title = _encryptionService.DecryptData(book.Title);
             bookDTO.Description = _encryptionService.DecryptData(book.Description);

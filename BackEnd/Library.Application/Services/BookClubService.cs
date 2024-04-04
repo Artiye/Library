@@ -167,10 +167,13 @@ namespace Library.Application.Services
             {
                 throw new Exception("id cannot be 0");
             }
-            var bookClub = await _bookClubRepository.GetBookClubById(id) ?? throw new Exception($"BookClub with id {id} does not exist");
+            
+            var bookClub = await _bookClubRepository.GetBookClubById(id) ?? throw new Exception($"BookClub with id {id} does not exist");          
             var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
             bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
             bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
+            bookClubDTO.OwnerEmail = _encryptionService.DecryptData(bookClub.OwnerEmail);
+            
             foreach (GetOnlyAuthorDTO bookClubsAuthors in bookClubDTO.Authors)
             {
                 bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
@@ -204,10 +207,11 @@ namespace Library.Application.Services
             {
                 throw new Exception("Name cannot be null");
             }
-            var bookClub = await _bookClubRepository.GetBookClubByName(encryptedName) ?? throw new Exception($"Bookclub with the name {encryptedName} does not exist");
+            var bookClub = await _bookClubRepository.GetBookClubByName(encryptedName) ?? throw new Exception($"Bookclub with the name {name} does not exist");
             var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
             bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
             bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
+            bookClubDTO.OwnerEmail = _encryptionService.DecryptData(bookClub.OwnerEmail);
             foreach (GetOnlyAuthorDTO bookClubsAuthors in bookClubDTO.Authors)
             {
                 bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
