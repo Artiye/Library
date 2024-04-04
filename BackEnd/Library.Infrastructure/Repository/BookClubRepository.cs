@@ -74,6 +74,7 @@ namespace Library.Infrastructure.Repository
             var bookclubList = await _context.Clubs
                 .Include(b => b.Authors)
                 .Include(b => b.Books)
+                .Include(b => b.Members)
                 .Where(b => b.Languages == selectedLanguage)
                 .ToListAsync();
 
@@ -87,7 +88,8 @@ namespace Library.Infrastructure.Repository
 
             var bookclubList = await _context.Clubs
                 .Include(b => b.Authors)
-                .Include(b => b.Books)               
+                .Include(b => b.Books) 
+                .Include(b => b.Members)
                 .Where(b => b.Genre == selectedGenre)
                 .ToListAsync();
             

@@ -165,7 +165,7 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = "adminuser123412903847192311234",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "61323d63-69ca-4b0b-8f21-3d46159e4a93",
+                            ConcurrencyStamp = "ae6ff8ff-6aff-4cb9-833e-55b2cd88faf0",
                             Email = "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=",
                             EmailConfirmed = true,
                             FirstName = "u9AWyUnjf7jztE2k6G7bSA==",
@@ -174,12 +174,12 @@ namespace Library.Infrastructure.Migrations
                             LockoutEnabled = false,
                             Nationality = "/s7OzCfLH5QLPCm5zAaSlg==",
                             NormalizedEmail = "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=",
-                            NormalizedUserName = "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBBF2OVhkXaGXvWPVNWtxA/fCB5/ONpwdh/hsrO0eUM6yLluNh4J3SlGuZyr0SXycQ==",
+                            NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELWni5IF2NpOI4AFd2WijM6GESxp4zYtN4ciRi5pgPnPN2r+RX7OR+ezZIFXM8Yldg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a7702c89-deec-4e58-a34e-622936d89245",
+                            SecurityStamp = "08ceffa4-09f6-43bc-b3c6-bf7140c81891",
                             TwoFactorEnabled = false,
-                            UserName = "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI="
+                            UserName = "artinjobro@gmail.com"
                         });
                 });
 

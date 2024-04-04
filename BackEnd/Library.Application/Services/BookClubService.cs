@@ -171,7 +171,26 @@ namespace Library.Application.Services
             var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
             bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
             bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
+            foreach (GetOnlyAuthorDTO bookClubsAuthors in bookClubDTO.Authors)
+            {
+                bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
+                bookClubsAuthors.Nationality = _encryptionService.DecryptData(bookClubsAuthors.Nationality);
+                bookClubsAuthors.BioGraphy = _encryptionService.DecryptData(bookClubsAuthors.BioGraphy);
+                bookClubsAuthors.ProfileImage = _encryptionService.DecryptData(bookClubsAuthors.ProfileImage);
+            }
 
+            foreach (GetOnlyBookDTO bookClubsBooks in bookClubDTO.Books)
+            {
+                bookClubsBooks.Title = _encryptionService.DecryptData(bookClubsBooks.Title);
+                bookClubsBooks.Description = _encryptionService.DecryptData(bookClubsBooks.Description);
+                bookClubsBooks.CoverImage = _encryptionService.DecryptData(bookClubsBooks.CoverImage);
+            }
+
+            foreach (GetUserDTO bookClubsUsers in bookClubDTO.Members)
+            {
+                bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
+                bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
+            }
             return bookClubDTO;
         }
 
@@ -189,6 +208,27 @@ namespace Library.Application.Services
             var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
             bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
             bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
+            foreach (GetOnlyAuthorDTO bookClubsAuthors in bookClubDTO.Authors)
+            {
+                bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
+                bookClubsAuthors.Nationality = _encryptionService.DecryptData(bookClubsAuthors.Nationality);
+                bookClubsAuthors.BioGraphy = _encryptionService.DecryptData(bookClubsAuthors.BioGraphy);
+                bookClubsAuthors.ProfileImage = _encryptionService.DecryptData(bookClubsAuthors.ProfileImage);
+            }
+
+            foreach (GetOnlyBookDTO bookClubsBooks in bookClubDTO.Books)
+            {
+                bookClubsBooks.Title = _encryptionService.DecryptData(bookClubsBooks.Title);
+                bookClubsBooks.Description = _encryptionService.DecryptData(bookClubsBooks.Description);
+                bookClubsBooks.CoverImage = _encryptionService.DecryptData(bookClubsBooks.CoverImage);
+            }
+
+            foreach (GetUserDTO bookClubsUsers in bookClubDTO.Members)
+            {
+                bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
+                bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
+            }
+        
             return bookClubDTO;
         }
 
@@ -203,12 +243,37 @@ namespace Library.Application.Services
                 throw new Exception($"Books with that language {language} do not exist");
 
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
-            foreach(GetBookClubDTO bookClubs in bookClubList)
+            foreach (GetBookClubDTO bookClubs in bookClubList)
             {
                 bookClubs.Name = _encryptionService.DecryptData(bookClubs.Name);
                 bookClubs.Description = _encryptionService.DecryptData(bookClubs.Description);
-            }
+                bookClubs.OwnerEmail = _encryptionService.DecryptData(bookClubs.OwnerEmail);
 
+
+
+                foreach (GetOnlyAuthorDTO bookClubsAuthors in bookClubs.Authors)
+                {
+                    bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
+                    bookClubsAuthors.Nationality = _encryptionService.DecryptData(bookClubsAuthors.Nationality);
+                    bookClubsAuthors.BioGraphy = _encryptionService.DecryptData(bookClubsAuthors.BioGraphy);
+                    bookClubsAuthors.ProfileImage = _encryptionService.DecryptData(bookClubsAuthors.ProfileImage);
+                }
+
+                foreach (GetOnlyBookDTO bookClubsBooks in bookClubs.Books)
+                {
+                    bookClubsBooks.Title = _encryptionService.DecryptData(bookClubsBooks.Title);
+                    bookClubsBooks.Description = _encryptionService.DecryptData(bookClubsBooks.Description);
+                    bookClubsBooks.CoverImage = _encryptionService.DecryptData(bookClubsBooks.CoverImage);
+                }
+
+                foreach (GetUserDTO bookClubsUsers in bookClubs.Members)
+                {
+                    bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
+                    bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
+                }
+
+
+            }
             return bookClubList;
         }
 
@@ -227,6 +292,32 @@ namespace Library.Application.Services
             {
                 bookClubs.Name = _encryptionService.DecryptData(bookClubs.Name);
                 bookClubs.Description = _encryptionService.DecryptData(bookClubs.Description);
+                bookClubs.OwnerEmail = _encryptionService.DecryptData(bookClubs.OwnerEmail);
+
+
+
+                foreach (GetOnlyAuthorDTO bookClubsAuthors in bookClubs.Authors)
+                {
+                    bookClubsAuthors.FullName = _encryptionService.DecryptData(bookClubsAuthors.FullName);
+                    bookClubsAuthors.Nationality = _encryptionService.DecryptData(bookClubsAuthors.Nationality);
+                    bookClubsAuthors.BioGraphy = _encryptionService.DecryptData(bookClubsAuthors.BioGraphy);
+                    bookClubsAuthors.ProfileImage = _encryptionService.DecryptData(bookClubsAuthors.ProfileImage);
+                }
+
+                foreach (GetOnlyBookDTO bookClubsBooks in bookClubs.Books)
+                {
+                    bookClubsBooks.Title = _encryptionService.DecryptData(bookClubsBooks.Title);
+                    bookClubsBooks.Description = _encryptionService.DecryptData(bookClubsBooks.Description);
+                    bookClubsBooks.CoverImage = _encryptionService.DecryptData(bookClubsBooks.CoverImage);
+                }
+
+                foreach (GetUserDTO bookClubsUsers in bookClubs.Members)
+                {
+                    bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
+                    bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
+                }
+
+
             }
             return bookClubList;
         }
@@ -240,6 +331,8 @@ namespace Library.Application.Services
             {
                 bookClubs.Name = _encryptionService.DecryptData(bookClubs.Name);
                 bookClubs.Description = _encryptionService.DecryptData(bookClubs.Description);
+                bookClubs.OwnerEmail = _encryptionService.DecryptData(bookClubs.OwnerEmail);
+                
 
 
                 foreach(GetOnlyAuthorDTO bookClubsAuthors in bookClubs.Authors)
@@ -410,13 +503,16 @@ namespace Library.Application.Services
             if (user == null)
                 return new ApiResponse(400, "User not found");
 
-            var userEmail = await _userManager.GetEmailAsync(user);
+            var userEmail = _encryptionService.DecryptData(user.Email);
+            var userFirstName = _encryptionService.DecryptData(user.FirstName);
+            var userLastName = _encryptionService.DecryptData(user.LastName);
+            var bookClubName = _encryptionService.DecryptData(bookClub.Name);
             if (string.IsNullOrEmpty(userEmail))
                 return new ApiResponse(400, "User email not found");
 
             var emailSubject = "Join Request Denied";
-            var emailBody = $"Dear {user.FirstName} {user.LastName}, \n \n" +
-                $"Your join request for bookclub '{bookClub.Name}' has been denied for the following reason: \n \n " +
+            var emailBody = $"Dear {userFirstName} {userLastName}, \n \n" +
+                $"Your join request for bookclub '{bookClubName}' has been denied for the following reason: \n \n " +
                 $"Reason: {reason} \n \n";
 
             await _emailSender.SendEmailAsync(userEmail, emailSubject, emailBody);
@@ -430,6 +526,8 @@ namespace Library.Application.Services
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return new ApiResponse(400, "User not authenticated");
+
+           
 
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             if (bookClub == null)
@@ -445,12 +543,15 @@ namespace Library.Application.Services
             if (!bookClub.Members.Any(m => m.Id == memberToRemove.Id))
                 return new ApiResponse(400, "The user specified is not a part of this bookclub");
 
-            var memberEmail = await _userManager.GetEmailAsync(memberToRemove);
+            var memberEmail = _encryptionService.DecryptData(memberToRemove.Email);
+            var memberFirstName = _encryptionService.DecryptData(memberToRemove.FirstName);
+            var memberLastName = _encryptionService.DecryptData(memberToRemove.LastName);
+            var bookClubName = _encryptionService.DecryptData(bookClub.Name);
             if (!string.IsNullOrEmpty(memberEmail))
             {
                 var emailSubject = "You have been removed from the book club";
-                var emailBody = $"Dear {memberToRemove.FirstName}, \n \n  " +
-                    $"You have been removed from the bookclub {bookClub.Name} for the following reason: \n \n " +
+                var emailBody = $"Dear {memberFirstName} {memberLastName}, \n \n  " +
+                    $"You have been removed from the bookclub '{bookClubName}' for the following reason: \n \n " +
                     $"{reason}\n \n";
 
                 await _emailSender.SendEmailAsync(memberEmail, emailSubject, emailBody);
@@ -476,6 +577,12 @@ namespace Library.Application.Services
 
             var joinRequests = await _bookClubRepository.GetJoinRequestsForBookClub(bookClubId);
             var joinRequestDTO = _mapper.Map<List<GetJoinRequestsDTO>>(joinRequests);
+            foreach(GetJoinRequestsDTO joinRequest in joinRequestDTO)
+            {
+                joinRequest.FirstName = _encryptionService.DecryptData(joinRequest.FirstName);
+                joinRequest.LastName = _encryptionService.DecryptData(joinRequest.LastName);
+            }
+
 
             return joinRequestDTO;
         }

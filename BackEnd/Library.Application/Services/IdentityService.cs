@@ -62,8 +62,8 @@ namespace Library.Application.Services
             identityUser.LastName = _encryptionService.EncryptData(dto.LastName);
             identityUser.Gender = _encryptionService.EncryptData(dto.Gender);
             identityUser.Nationality = _encryptionService.EncryptData(dto.Nationality);
-            
             identityUser.UserName = dto.Email;
+
             var result = await _userManager.CreateAsync(identityUser, dto.Password);
             if (!result.Succeeded)
                 return new ApiResponse(400, "Something went Wrong.");
