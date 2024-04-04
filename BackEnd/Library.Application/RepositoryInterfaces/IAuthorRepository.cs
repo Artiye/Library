@@ -1,4 +1,6 @@
-﻿using Library.Domain.Entity;
+﻿using Library.Application.DTOs.BookClubDTOs;
+using Library.Application.DTOs.BookDTOs;
+using Library.Domain.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,7 @@ namespace Library.Application.RepositoryInterfaces
 
         Task<List<Author>> GetAllAuthorList();
 
-        Task<List<Book>> GetBooksByAuthorId(int authorId);
+        Task<List<GetBookDTO>> GetBooksByAuthorId(int authorId);
 
        
 

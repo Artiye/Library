@@ -1,4 +1,5 @@
 ﻿using Library.Application.DTOs.AuthorDTOs;
+using Library.Application.DTOs.BookDTOs;
 using Library.Application.Responses;
 using Library.Domain.Entity;
 using System;
@@ -23,7 +24,7 @@ namespace Library.Application.Services.Interfaces
 
         Task<List<GetAuthorDTO>> GetAllAuthors();
 
-        Task<List<Book>> GetBooksByAuthorId(int authorId);
+        Task<List<GetBookDTO>> GetBooksByAuthorId(int authorId);
      
         Task<ApiResponse> AddBookToAuthor(int authorId, int bookId);
 
