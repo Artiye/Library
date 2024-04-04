@@ -200,6 +200,15 @@ namespace Library.Application.Services
                 books.Title = _encryptionService.DecryptData(books.Title);
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+
+             foreach(GetOnlyAuthorDTO authors in books.Authors)
+                {
+                    authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
+                    authors.FullName = _encryptionService.DecryptData(authors.FullName);
+                    authors.Nationality = _encryptionService.DecryptData(authors.Nationality);
+                    authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
+                }
+
             }
 
             return bookList;
@@ -221,6 +230,14 @@ namespace Library.Application.Services
                 books.Title = _encryptionService.DecryptData(books.Title);
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+
+                foreach (GetOnlyAuthorDTO authors in books.Authors)
+                {
+                    authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
+                    authors.FullName = _encryptionService.DecryptData(authors.FullName);
+                    authors.Nationality = _encryptionService.DecryptData(authors.Nationality);
+                    authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
+                }
             }
             return bookList;
         
