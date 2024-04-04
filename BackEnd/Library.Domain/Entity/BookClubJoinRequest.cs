@@ -39,7 +39,7 @@ namespace Library.Domain.Entity
             builder.HasOne(j => j.BookClub)
              .WithMany(b => b.BookClubJoinRequests)
              .HasForeignKey(j => j.BookClubId)
-             .OnDelete(DeleteBehavior.NoAction);
+             .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(j => j.User)
                 .WithMany()

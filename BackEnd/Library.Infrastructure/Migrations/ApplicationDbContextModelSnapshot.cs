@@ -165,7 +165,7 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = "adminuser123412903847192311234",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ae6ff8ff-6aff-4cb9-833e-55b2cd88faf0",
+                            ConcurrencyStamp = "f117d520-f782-4c87-8e7f-5f8dedc3b325",
                             Email = "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=",
                             EmailConfirmed = true,
                             FirstName = "u9AWyUnjf7jztE2k6G7bSA==",
@@ -175,9 +175,9 @@ namespace Library.Infrastructure.Migrations
                             Nationality = "/s7OzCfLH5QLPCm5zAaSlg==",
                             NormalizedEmail = "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=",
                             NormalizedUserName = "ARTINJOBRO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELWni5IF2NpOI4AFd2WijM6GESxp4zYtN4ciRi5pgPnPN2r+RX7OR+ezZIFXM8Yldg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOJmP5HkiuJ+85RX/Pggy9sEq3VaMOmbFbcvQcFbRH5EGKc2I8+VesSFWWvXv9JMtg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "08ceffa4-09f6-43bc-b3c6-bf7140c81891",
+                            SecurityStamp = "52a7f7e1-9953-43b3-baaf-524d073c6105",
                             TwoFactorEnabled = false,
                             UserName = "artinjobro@gmail.com"
                         });
@@ -585,7 +585,7 @@ namespace Library.Infrastructure.Migrations
                     b.HasOne("Library.Domain.Entity.BookClub", "BookClub")
                         .WithMany("BookClubJoinRequests")
                         .HasForeignKey("BookClubId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Library.Domain.Entity.ApplicationUser", "User")

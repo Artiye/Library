@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb307 : Migration
+    public partial class addtodb207 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -356,7 +356,8 @@ namespace Library.Infrastructure.Migrations
                         name: "FK_JoinRequests_Clubs_BookClubId",
                         column: x => x.BookClubId,
                         principalTable: "Clubs",
-                        principalColumn: "BookClubId");
+                        principalColumn: "BookClubId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -371,7 +372,7 @@ namespace Library.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminuser123412903847192311234", 0, "ae6ff8ff-6aff-4cb9-833e-55b2cd88faf0", "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=", true, "u9AWyUnjf7jztE2k6G7bSA==", "pj2qf8wIy62RLNJ+1hXIKw==", "DlK7w9SeYV9y3UgPKw4VJg==", false, null, "/s7OzCfLH5QLPCm5zAaSlg==", "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAELWni5IF2NpOI4AFd2WijM6GESxp4zYtN4ciRi5pgPnPN2r+RX7OR+ezZIFXM8Yldg==", null, false, "08ceffa4-09f6-43bc-b3c6-bf7140c81891", false, "artinjobro@gmail.com" });
+                values: new object[] { "adminuser123412903847192311234", 0, "f117d520-f782-4c87-8e7f-5f8dedc3b325", "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=", true, "u9AWyUnjf7jztE2k6G7bSA==", "pj2qf8wIy62RLNJ+1hXIKw==", "DlK7w9SeYV9y3UgPKw4VJg==", false, null, "/s7OzCfLH5QLPCm5zAaSlg==", "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEOJmP5HkiuJ+85RX/Pggy9sEq3VaMOmbFbcvQcFbRH5EGKc2I8+VesSFWWvXv9JMtg==", null, false, "52a7f7e1-9953-43b3-baaf-524d073c6105", false, "artinjobro@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
