@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
@@ -97,13 +98,20 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to edit");
         }
 
-        public async Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId)
+        public async Task<ResponseDTO> GetAuthorOfABook(int bookId)
         {
+            var response = new ResponseDTO();
             if (bookId == 0)
             {
-                throw new Exception("book id cannot be 0");
+                response.Message = "Id cannot be 0";
+                return response;
             }
-                var book = await _bookRepository.GetBookById(bookId) ?? throw new Exception($"Author with that book id {bookId} does not exist");
+            var book = await _bookRepository.GetBookById(bookId);
+            if(book == null)
+            {
+                response.Message = $"Author with the id {bookId} does not exist";
+                return response;
+            }
                 var authorDTO = _mapper.Map<List<GetOnlyAuthorDTO>>(book.Authors);
             foreach (GetOnlyAuthorDTO author1 in authorDTO)
             {
@@ -112,18 +120,27 @@ namespace Library.Application.Services
                 author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                 author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
             }
-            return authorDTO;                
+            response.Status = 200;
+            response.Result = authorDTO;
+            return response;
          }
             
         
 
-        public async Task<GetBookDTO> GetBookById(int id)
+        public async Task<ResponseDTO> GetBookById(int id)
         {
+            var response = new ResponseDTO();
             if (id == 0)
             {
-                throw new Exception("id cannot be 0");
+                response.Message = "id cannot be 0";
+                return response;
             }
-                var book = await _bookRepository.GetBookById(id) ?? throw new Exception($"Book with that id {id} does not exist");
+            var book = await _bookRepository.GetBookById(id);
+            if(book == null)
+            {
+                response.Message = $"Book with that id {id} does not exist";
+                return response;
+            }
                 var bookDTO = _mapper.Map<GetBookDTO>(book);
                 bookDTO.Title = _encryptionService.DecryptData(book.Title);
                 bookDTO.Description = _encryptionService.DecryptData(book.Description);
@@ -137,19 +154,30 @@ namespace Library.Application.Services
                     author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
                 }
 
-                return bookDTO ?? throw new Exception($"Book with that id {id} does not exist");                
+            response.Status = 200;
+            response.Result = bookDTO;
+            return response;
         }
            
         
 
-        public async Task<GetBookDTO> GetBookByTitle(string title)
+        public async Task<ResponseDTO> GetBookByTitle(string title)
         {
+            var response = new ResponseDTO();
+
             var encryptedTitle = _encryptionService.EncryptData(title);
             if (encryptedTitle == null)
             {
-                throw new Exception("Title cannot be null");
+                response.Message = "Title cannot be null";
+                return response;
             }
-            var book = await _bookRepository.GetBookByTitle(encryptedTitle) ?? throw new Exception($"Book with that title {title} does not exist");
+            var book = await _bookRepository.GetBookByTitle(encryptedTitle);
+
+                if(book == null)
+            {
+                response.Message = $"Book with that title {title} does not exist";
+                return response;
+            }
             var bookDTO = _mapper.Map<GetBookDTO>(book);
             bookDTO.Title = _encryptionService.DecryptData(book.Title);
             bookDTO.Description = _encryptionService.DecryptData(book.Description);
@@ -162,14 +190,23 @@ namespace Library.Application.Services
                 author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                 author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
             }
-            return bookDTO;               
+            response.Status = 200;
+            response.Result = bookDTO;
+            return response;
          }          
         
 
 
-        public async Task<List<GetBookDTO>> GetBooks()
+        public async Task<ResponseDTO> GetBooks()
         {
+            var response = new ResponseDTO();
+
             var book = await _bookRepository.GetAllBooks();
+            if(book.Count == 0)
+            {
+                response.Message = "No books found";
+                return response;
+            }
             var bookList = _mapper.Map<List<GetBookDTO>>(book);
             foreach(GetBookDTO books in bookList)
             {
@@ -177,52 +214,37 @@ namespace Library.Application.Services
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
 
-                books.Authors = await GetAuthorOfABook(books.BookId);
-            }
-           
-
-            return bookList;
-        }
-        public async Task<List<GetBookDTO>> GetBooksByLanguage(string language)
-        {
-            if(language == null)
-            {
-                throw new Exception("language cannot be null");
-            }
-            var book = await _bookRepository.GetBooksByLanguage(language);
-
-            if(book.Count == 0)            
-                throw new Exception($"Books with language {language} do not exist");
-            
-            var bookList = _mapper.Map<List<GetBookDTO>>(book);
-            foreach (GetBookDTO books in bookList)
-            {
-                books.Title = _encryptionService.DecryptData(books.Title);
-                books.Description = _encryptionService.DecryptData(books.Description);
-                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
-
-             foreach(GetOnlyAuthorDTO authors in books.Authors)
+               foreach(GetOnlyAuthorDTO authors in  books.Authors)
                 {
                     authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
                     authors.FullName = _encryptionService.DecryptData(authors.FullName);
                     authors.Nationality = _encryptionService.DecryptData(authors.Nationality);
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
-
             }
+           
 
-            return bookList;
+            response.Status = 200;
+            response.Result = bookList;
+            return response;
         }
-        public async Task<List<GetBookDTO>> GetBooksByGenre(string genre) { 
-            if (genre == null)
+        public async Task<ResponseDTO> GetBooksByLanguage(string language)
+        {
+            var response = new ResponseDTO();
+
+            if (language == null)
             {
-                throw new Exception("genre cannot be null");
+                response.Message = "Language cannot be null";
+                return response;
             }
 
-            var book = await _bookRepository.GetBooksByGenre(genre);
+            var book = await _bookRepository.GetBooksByLanguage(language);
 
             if (book.Count == 0)
-                throw new Exception($"Books with that genre {genre} do not exist");
+            {
+                response.Message = $"Books with language {language} do not exist";
+                return response;
+            }
 
             var bookList = _mapper.Map<List<GetBookDTO>>(book);
             foreach (GetBookDTO books in bookList)
@@ -239,7 +261,47 @@ namespace Library.Application.Services
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
             }
-            return bookList;
+
+            response.Status = 200;
+            response.Result = bookList;
+            return response;
+        }
+
+        public async Task<ResponseDTO> GetBooksByGenre(string genre) {
+            var response = new ResponseDTO();
+
+            if (genre == null)
+            {
+                response.Message = "Genre cannot be null";
+                return response;
+            }
+
+            var book = await _bookRepository.GetBooksByGenre(genre);
+
+            if (book.Count == 0)
+            {
+                response.Message = $"Books with that genre {genre} do not exist";
+                return response;
+            }
+
+            var bookList = _mapper.Map<List<GetBookDTO>>(book);
+            foreach (GetBookDTO books in bookList)
+            {
+                books.Title = _encryptionService.DecryptData(books.Title);
+                books.Description = _encryptionService.DecryptData(books.Description);
+                books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
+
+                foreach (GetOnlyAuthorDTO authors in books.Authors)
+                {
+                    authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
+                    authors.FullName = _encryptionService.DecryptData(authors.FullName);
+                    authors.Nationality = _encryptionService.DecryptData(authors.Nationality);
+                    authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
+                }
+            }
+            response.Status = 200;
+            response.Result = bookList;
+            return response;
         
         }      
     }

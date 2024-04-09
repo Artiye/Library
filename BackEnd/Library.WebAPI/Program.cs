@@ -1,3 +1,4 @@
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Encryption;
 using Library.Application.Options;
 using Library.Application.RepositoryInterfaces;
@@ -76,6 +77,8 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IMemberService, MemberService>();    
 
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
+
+builder.Services.AddScoped<ResponseDTO>();
 
 
 
