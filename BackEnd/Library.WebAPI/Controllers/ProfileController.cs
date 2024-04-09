@@ -23,41 +23,41 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> GetMyProfile()
         {
             var result = await _profileService.GetMyProfile();
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPut]
         public async Task<IActionResult> EditMyProfile([FromBody] EditProfileDTO dto)
         {
             var result = await _profileService.EditProfile(dto);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         [HttpDelete]
 
         public async Task<IActionResult> DeleteMyProfile(string password)
         {
             var result = await _profileService.DeleteProfile(password);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         
         [HttpGet("confirm-delete")]
         public async Task<IActionResult> ConfirmDelete(string userId)
         {
             var result = await _profileService.ConfirmDelete(userId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPost("add-book-to-readlist")]
 
         public async Task<IActionResult> AddBookToReadList(int bookId)
         {
             var result = await _profileService.AddBookToReadList(bookId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPost("add-author-to-favourites")]
 
         public async Task<IActionResult> AddAuthorToMyFavourites(int authorId)
         {
             var result = await _profileService.AddAuthorToMyFavourites(authorId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
 
         [HttpGet("read-list")]
@@ -65,28 +65,28 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> GetMyReadList()
         {
             var result = await _profileService.GetMyReadList();
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [HttpGet("author-list")]
 
         public async Task<IActionResult> GetMyFavouriteAuthors()
         {
             var result = await _profileService.GetMyFavouriteAuthors();
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
 
         [HttpPut("remove-book-from-read-list")]
         public async Task<IActionResult> RemoveBookFromReadList(int bookId)
         {
             var result = await _profileService.RemoveBookFromReadList(bookId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPut("remove-author-from-favourites")]
 
         public async Task<IActionResult> RemoveAuthorFromFavourites(int authorId)
         {
             var result = await _profileService.RemoveAuthorFromMyFavourites(authorId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         
     }

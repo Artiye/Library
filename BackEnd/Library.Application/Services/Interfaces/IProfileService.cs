@@ -1,6 +1,7 @@
 ﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Responses;
 using Library.Domain.Entity;
 using System;
@@ -13,7 +14,7 @@ namespace Library.Application.Services.Interfaces
 {
     public interface IProfileService
     {
-        Task<GetProfileDTO> GetMyProfile();
+        Task<ResponseDTO> GetMyProfile();
 
         Task<ApiResponse> EditProfile(EditProfileDTO dto);
 
@@ -23,7 +24,7 @@ namespace Library.Application.Services.Interfaces
 
         Task<ApiResponse> AddBookToReadList(int bookId);
 
-        Task<List<GetBookDTO>> GetMyReadList();
+        Task<ResponseDTO> GetMyReadList();
 
         Task<ApiResponse> AddAuthorToMyFavourites(int authorId);
 
