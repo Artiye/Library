@@ -32,6 +32,9 @@ namespace Library.Application.Services
                 {
                     return new ApiResponse(400, "Title, Description, and CoverImage are required");
                 }
+                if (dto.AuthorIds == null || !dto.AuthorIds.Any())
+                    return new ApiResponse(400, "At least one author is required");    
+
                 try
                 {
                     var book = _mapper.Map<Book>(dto);

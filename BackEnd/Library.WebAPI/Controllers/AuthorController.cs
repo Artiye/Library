@@ -2,6 +2,7 @@
 using Library.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
@@ -23,32 +24,32 @@ namespace Library.WebAPI.Controllers
         
         public async Task<IActionResult> AddAuthor([FromBody] AddAuthorDTO dto)
         {
-            var response = await _authorService.AddAuthor(dto);
-            return response.Status == 200 ? Ok(response) : BadRequest(response);
+            var result = await _authorService.AddAuthor(dto);
+            return StatusCode(result.Status, result);
         }
         [Authorize(Roles = "Admin")]
         [HttpPost("AddAuthorToBook")]
         
         public async Task<IActionResult> AddBooksToAuthor( int authorId,  int bookId)
         {
-            var response = await _authorService.AddBookToAuthor(authorId, bookId);
-            return Ok(response);
+            var result = await _authorService.AddBookToAuthor(authorId, bookId);
+            return StatusCode(result.Status, result);
         }
         [Authorize(Roles = "Admin")]
         [HttpPut("RemoveBookFromAuthor")]
        
         public async Task<IActionResult> RemoveBookFromAuthor(int authorId, int bookId)
         {
-            var response = await _authorService.RemoveBookFromAuthor(authorId, bookId);
-            return Ok(response);
+            var result = await _authorService.RemoveBookFromAuthor(authorId, bookId);
+            return StatusCode(result.Status, result);
         }
         [Authorize(Roles = "Admin")]
         [HttpPut]
        
         public async Task<IActionResult> EditAuthor([FromBody] EditAuthorDTO dto)
         {
-            var response = await _authorService.EditAuthor(dto);
-            return response.Status == 200 ? Ok(response) : BadRequest(response);
+            var result = await _authorService.EditAuthor(dto);
+            return StatusCode(result.Status, result);
         }
 
         [Authorize(Roles = "Admin")]
@@ -56,8 +57,8 @@ namespace Library.WebAPI.Controllers
         
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            var response = await _authorService.DeleteAuthor(id);
-            return response.Status == 200 ? Ok(response) : BadRequest(response);
+            var result = await _authorService.DeleteAuthor(id);
+            return StatusCode(result.Status, result);
         }
 
         [AllowAnonymous]
@@ -65,31 +66,31 @@ namespace Library.WebAPI.Controllers
 
         public async Task<IActionResult> GetAuthorById(int authorId)
         {
-            var response = await _authorService.GetAuthorById(authorId);
-            return Ok(response);
+            var result = await _authorService.GetAuthorById(authorId);
+            return StatusCode(result.Status, result);
         }
         [AllowAnonymous]
         [HttpGet("byname/{authorName}")]
 
         public async Task<IActionResult> GetAuthorByName(string authorName)
         {
-            var response = await _authorService.GetAuthorByName(authorName);
-            return Ok(response);
+            var result = await _authorService.GetAuthorByName(authorName);
+            return StatusCode(result.Status, result);
         }
         [AllowAnonymous]
         [HttpGet]
         
         public async Task<IActionResult> GetAllAuthors()
         {
-            var response = await _authorService.GetAllAuthors();
-            return Ok(response);
+            var result = await _authorService.GetAllAuthors();
+            return StatusCode(result.Status, result);
         }
         [AllowAnonymous]
         [HttpGet("{authorId}/books")]
         public async Task<IActionResult> GetBooksByAuthorId(int authorId)
         {
-            var response = await _authorService.GetBooksByAuthorId(authorId);
-            return Ok(response);
+            var result = await _authorService.GetBooksByAuthorId(authorId);
+            return StatusCode(result.Status, result);
         }            
     }
 }
