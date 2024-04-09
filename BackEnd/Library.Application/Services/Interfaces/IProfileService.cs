@@ -28,7 +28,7 @@ namespace Library.Application.Services.Interfaces
 
         Task<ApiResponse> AddAuthorToMyFavourites(int authorId);
 
-        Task<List<GetAuthorDTO>> GetMyFavouriteAuthors();
+        Task<ResponseDTO> GetMyFavouriteAuthors();
 
         Task<ApiResponse> RemoveAuthorFromMyFavourites(int authorId);
 

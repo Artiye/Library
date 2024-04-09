@@ -25,6 +25,8 @@ namespace Library.Infrastructure.Data
 
         public DbSet<BookClubJoinRequest> JoinRequests { get; set; }
 
+       
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -36,6 +38,7 @@ namespace Library.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new BookClubConfiguration());
             modelBuilder.ApplyConfiguration(new BookClubJoinRequestConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
         }
     }
 }
