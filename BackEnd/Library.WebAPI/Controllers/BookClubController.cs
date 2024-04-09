@@ -4,6 +4,7 @@ using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebAPI.Controllers
@@ -26,7 +27,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> AddBookClub([FromBody] AddBookClubDTOs dto)
         {
             var result = await _bookClubService.AddBookClub(dto);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         
         [HttpPost("AddBookToBookClub")]
@@ -34,7 +35,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> AddBookToBookClub(int bookClubId, int bookId)
         {
             var result = await _bookClubService.AddBookToBookClub(bookClubId, bookId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         
         [HttpPost("AddAuthorToBookClub")]
@@ -42,7 +43,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> AddAuthorToBookClub(int bookClubId, int authorId)
         {
             var result = await _bookClubService.AddAuthorToBookClub(bookClubId, authorId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         
         [HttpPut]
@@ -51,7 +52,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> EditBookClub([FromBody] EditBookClubDTO dto)
         {
             var result = await _bookClubService.EditBookClub(dto);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
        
         [HttpPut("RemoveBookFromBookClub")]
@@ -59,7 +60,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> RemoveBookFromBookClub(int bookClubId, int bookId)
         {
             var result = await _bookClubService.RemoveBookFromBookClub(bookClubId, bookId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
 
         }
        
@@ -68,14 +69,14 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> RemoveAuthorToBookClub(int bookClubId, int authorId)
         {
             var result = await _bookClubService.RemoveAuthorFromBookClub(bookClubId, authorId);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPut("RemoveMemberFromBookClub")]
 
         public async Task<IActionResult> RemoveMemberFromBookClub(int bookClubId, string memberId, string reason)
         {
             var result = await _bookClubService.RemoveMemberFromBookClub(bookClubId, memberId, reason);
-            return result.Status == 200? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
         
         [HttpDelete]
@@ -83,7 +84,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> DeleteBookClub(int id)
         {
             var result = await _bookClubService.DeleteBookClub(id);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
 
         [AllowAnonymous]
@@ -92,7 +93,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> GetBookClubById(int bookClubId)
         {
             var result = await _bookClubService.GetBookClubById(bookClubId);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [AllowAnonymous]
         [HttpGet("byname/{bookClubName}")]
@@ -100,7 +101,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> GetBookClubByName(string bookClubName)
         {
             var result = await _bookClubService.GetBookClubByName(bookClubName);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         
         [HttpGet]
@@ -108,7 +109,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> GetAllBookClubs()
         {
             var result = await _bookClubService.GetBookClubs();
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [AllowAnonymous]
         [HttpGet("bylanguage/{language}")]
@@ -116,42 +117,42 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> GetBookClubByLanguage(string language)
         {
             var result = await _bookClubService.GetBookClubByLanguage(language);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [AllowAnonymous]
         [HttpGet("bygenre/{genre}")]
         public async Task<IActionResult> GetBookClubByGenre(string genre)
         {
             var result = await _bookClubService.GetBookClubByGenre(genre);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
 
         [HttpGet("joinrequests-for-bookclub")]
         public async Task<IActionResult> GetJoinRequestsForOwner(int bookClubId)
         {
             var result = await _bookClubService.GetJoinRequestsForOwner(bookClubId);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
 
         [HttpPost("request-to-join")]
         public async Task<IActionResult> RequestToJoinBookClub([FromQuery] int bookClubId, string reason)
         {
-            var response = await _bookClubService.RequestToJoinBookClub(bookClubId, reason);
-            return response.Status == 200? Ok(response) : BadRequest(response);
+            var result = await _bookClubService.RequestToJoinBookClub(bookClubId, reason);
+            return StatusCode(result.Status, result);
         }
         
         [HttpPost("accept-join-request")]
         public async Task<IActionResult> AcceptJoinRequest([FromQuery] int joinRequestId)
         {
-            var response = await _bookClubService.AcceptJoinRequest(joinRequestId);
-            return response.Status == 200 ? Ok(response) : BadRequest(response);
+            var result = await _bookClubService.AcceptJoinRequest(joinRequestId);
+            return StatusCode(result.Status, result);
         }
 
         [HttpPost("deny-join-request")]
         public async Task<IActionResult> DenyJoinRequest([FromQuery] int joinRequestId, string reason)
         {
-            var response= await _bookClubService.DenyJoinRequest(joinRequestId, reason);
-            return response.Status == 200 ? Ok(response) : BadRequest(response);
+            var result= await _bookClubService.DenyJoinRequest(joinRequestId, reason);
+            return StatusCode(result.Status, result);
         }
         
         
