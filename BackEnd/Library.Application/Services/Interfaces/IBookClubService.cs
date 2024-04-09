@@ -1,5 +1,6 @@
 ﻿using Library.Application.DTOs.BookClubDTOs;
 using Library.Application.DTOs.BookClubJoinRequestDTO;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Responses;
 using Library.Domain.Entity;
 using System;
@@ -18,17 +19,17 @@ namespace Library.Application.Services.Interfaces
 
         Task<ApiResponse> DeleteBookClub(int id);
 
-        Task<GetBookClubDTO> GetBookClubById(int id);
+        Task<ResponseDTO> GetBookClubById(int id);
 
-        Task<GetBookClubDTO> GetBookClubByName(string name);
+        Task<ResponseDTO> GetBookClubByName(string name);
 
-        Task<List<GetBookClubDTO>> GetBookClubs();
+        Task<ResponseDTO> GetBookClubs();
 
-        Task<List<GetBookClubDTO>> GetBookClubByGenre(string genre);
+        Task<ResponseDTO> GetBookClubByGenre(string genre);
 
-        Task<List<GetBookClubDTO>> GetBookClubByLanguage(string language);
+        Task<ResponseDTO> GetBookClubByLanguage(string language);
 
-        Task<List<GetJoinRequestsDTO>> GetJoinRequestsForOwner(int bookClubId);
+        Task<ResponseDTO> GetJoinRequestsForOwner(int bookClubId);
 
         Task<ApiResponse> AddBookToBookClub(int bookClubId, int bookId);
 

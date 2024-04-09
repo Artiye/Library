@@ -3,6 +3,7 @@ using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookClubDTOs;
 using Library.Application.DTOs.BookClubJoinRequestDTO;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.DTOs.UserDTOs;
 using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
@@ -161,14 +162,21 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to edit");
         }
 
-        public async Task<GetBookClubDTO> GetBookClubById(int id)
+        public async Task<ResponseDTO> GetBookClubById(int id)
         {
+            var response = new ResponseDTO();
             if (id == 0)
             {
-                throw new Exception("id cannot be 0");
+                response.Message = "Id cannot be 0";
+                return response;
             }
-            
-            var bookClub = await _bookClubRepository.GetBookClubById(id) ?? throw new Exception($"BookClub with id {id} does not exist");          
+
+            var bookClub = await _bookClubRepository.GetBookClubById(id);
+                if(bookClub == null)
+            {
+                response.Message = $"BookClub with id {id} does not exist";
+                return response;
+            }
             var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
             bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
             bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
@@ -194,20 +202,29 @@ namespace Library.Application.Services
                 bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
                 bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
             }
-            return bookClubDTO;
+            response.Status = 200;
+            response.Result = bookClubDTO;
+            return response;
         }
 
 
 
-        public async Task<GetBookClubDTO> GetBookClubByName(string name)
+        public async Task<ResponseDTO> GetBookClubByName(string name)
         {
+            var response = new ResponseDTO();
             var encryptedName = _encryptionService.EncryptData(name);
 
             if (encryptedName == null)
             {
-                throw new Exception("Name cannot be null");
+                response.Message = "Name cannot be null";
+                return response;
             }
-            var bookClub = await _bookClubRepository.GetBookClubByName(encryptedName) ?? throw new Exception($"Bookclub with the name {name} does not exist");
+            var bookClub = await _bookClubRepository.GetBookClubByName(encryptedName);
+                if(bookClub == null)
+            {
+                response.Message = $"Bookclub with the name {name} does not exist";
+                return response;
+            }
             var bookClubDTO = _mapper.Map<GetBookClubDTO>(bookClub);
             bookClubDTO.Name = _encryptionService.DecryptData(bookClubDTO.Name);
             bookClubDTO.Description = _encryptionService.DecryptData(bookClubDTO.Description);
@@ -232,19 +249,26 @@ namespace Library.Application.Services
                 bookClubsUsers.FirstName = _encryptionService.DecryptData(bookClubsUsers.FirstName);
                 bookClubsUsers.LastName = _encryptionService.DecryptData(bookClubsUsers.LastName);
             }
-        
-            return bookClubDTO;
+            response.Status = 200;
+            response.Result = bookClubDTO;
+            return response;
         }
 
-        public async Task<List<GetBookClubDTO>> GetBookClubByLanguage(string language)
+        public async Task<ResponseDTO> GetBookClubByLanguage(string language)
         {
+            var response = new ResponseDTO();
             if (language == null)
             {
-                throw new Exception("language cannot be null");
+                response.Message = "Language cannot be null";
+                return response;
             }
             var bookClub = await _bookClubRepository.GetBookClubByLanguage(language);
             if (bookClub.Count == 0)
-                throw new Exception($"Books with that language {language} do not exist");
+            {
+                response.Message = $"Books with the language {language} do not exist";
+                return response;
+            }
+                
 
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
             foreach (GetBookClubDTO bookClubs in bookClubList)
@@ -278,19 +302,25 @@ namespace Library.Application.Services
 
 
             }
-            return bookClubList;
+            response.Status = 200;
+            response.Result = bookClubList;
+            return response;
         }
 
-        public async Task<List<GetBookClubDTO>> GetBookClubByGenre(string genre)
+        public async Task<ResponseDTO> GetBookClubByGenre(string genre)
         {
+            var response = new ResponseDTO();
             if (genre == null)
             {
-                throw new Exception("genre cannot be null");
+                response.Message = "Genre cannot be null";
+                return response;
             }
             var bookClub = await _bookClubRepository.GetBookClubByGenre(genre);
             if (bookClub.Count == 0)
-                throw new Exception($"Books with that genre {genre} do not exist");
-
+            {
+                response.Message = $"Books with the genre {genre} do not exist";
+                return response;
+            }
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
             foreach (GetBookClubDTO bookClubs in bookClubList)
             {
@@ -323,13 +353,21 @@ namespace Library.Application.Services
 
 
             }
-            return bookClubList;
+            response.Status = 200;
+            response.Result = bookClubList;
+            return response;
         }
 
 
-        public async Task<List<GetBookClubDTO>> GetBookClubs()
+        public async Task<ResponseDTO> GetBookClubs()
         {
+            var response = new ResponseDTO();
             var bookClub = await _bookClubRepository.GetAllBookClubs();
+            if(bookClub.Count == 0 )
+            {
+                response.Message = "No bookclubs found";
+                return response;
+            }
             var bookClubList = _mapper.Map<List<GetBookClubDTO>>(bookClub);
             foreach(GetBookClubDTO bookClubs in bookClubList)
             {
@@ -362,7 +400,9 @@ namespace Library.Application.Services
 
                 
             }
-            return bookClubList;
+            response.Status = 200;
+            response.Result = bookClubList;
+            return response;
         }
 
         public async Task<ApiResponse> RemoveAuthorFromBookClub(int bookClubId, int authorId)
@@ -567,18 +607,32 @@ namespace Library.Application.Services
             return new ApiResponse(200, "Member kicked successfully");
         }
 
-        public async Task<List<GetJoinRequestsDTO>> GetJoinRequestsForOwner(int bookClubId)
+        public async Task<ResponseDTO> GetJoinRequestsForOwner(int bookClubId)
         {
+            var response = new ResponseDTO();
+
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
-                throw new Exception("You are not authorized");
+            {
+                response.Message = "Userid not authenticated";
+                return response;
+            }
+              
 
             var bookClub = await _bookClubRepository.GetBookClubById(bookClubId);
             if (bookClub == null)
-                throw new Exception("BookClub not found");
+            {
+                response.Message = "Bookclub not found";
+                return response;
+            }
+               
 
             if (bookClub.OwnerId != userId)
-                throw new Exception("Only the owner can see the join requests");
+            {
+                response.Message = "Only the owner of this bookclub can see the join requests for this bookclub";
+                return response;
+            }
+                
 
             var joinRequests = await _bookClubRepository.GetJoinRequestsForBookClub(bookClubId);
             var joinRequestDTO = _mapper.Map<List<GetJoinRequestsDTO>>(joinRequests);
@@ -590,7 +644,9 @@ namespace Library.Application.Services
             }
 
 
-            return joinRequestDTO;
+            response.Status = 200;
+            response.Result = joinRequestDTO;
+            return response;
         }
     }
 }
