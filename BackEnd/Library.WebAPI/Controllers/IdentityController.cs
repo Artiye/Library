@@ -26,7 +26,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
         {
             var result = await _service.Register(dto);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+             return StatusCode(result.Status, result); ;
         }
         [HttpGet("ConfirmEmail")]
         public async Task<ActionResult<ApiResponse>> ConfirmEmail(string email)
@@ -45,7 +45,7 @@ namespace Library.WebAPI.Controllers
         public async Task<IActionResult> ChangeUserRole(RoleChangeDTO dto)
         {
             var result = await _service.EditRole(dto);
-            return result.Status == 200 ? Ok(result) : BadRequest(result);
+            return StatusCode(result.Status, result);
         }
     }
 }
