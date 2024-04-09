@@ -1,5 +1,6 @@
 ﻿using Library.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebAPI.Controllers
@@ -17,28 +18,28 @@ namespace Library.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMembers()
         {
-            var members = await _memberService.GetAllMembers();
-            return Ok(members);
+            var result = await _memberService.GetAllMembers();
+            return StatusCode(result.Status, result);
         }
         [HttpGet("{memberId}")]
 
         public async Task<IActionResult> GetMemberById(string memberId)
         {
-            var member = await _memberService.GetMemberById(memberId);
-            return Ok(member);
+            var result = await _memberService.GetMemberById(memberId);
+            return StatusCode(result.Status, result);
         }
         [HttpGet("{memberId}/readlist")]
         public async Task<IActionResult> GetAMembersReadList(string memberId)
         {
             var result = await _memberService.GetAMembersReadList(memberId);
-            return Ok(result);  
+            return StatusCode(result.Status, result);
         }
         [HttpGet("{memberId}/favouriteAuthors")]
 
         public async Task<IActionResult> GetAMembersFavouriteAuthors(string memberId)
         {
             var result = await _memberService.GetAMembersFavouriteAuthors(memberId);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
     }
 }
