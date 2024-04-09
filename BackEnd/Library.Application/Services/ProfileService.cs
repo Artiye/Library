@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Azure;
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
 using Library.Application.DTOs.ProfileDTOs;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
@@ -116,15 +118,24 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to edit");
         }
 
-        public async Task<GetProfileDTO> GetMyProfile()
+        public async Task<ResponseDTO> GetMyProfile()
         {
+            var response = new ResponseDTO();
             var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
-                throw new Exception("User not authorized");
+            {
+                response.Message = "User not authenticated";
+                return response;
+            }
+                
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                throw new InvalidOperationException("User not found");
+            {
+                response.Message = "User not found";
+                return response;
+            }
+                
 
             var userDTO = _mapper.Map<GetProfileDTO>(user);
             userDTO.FirstName = _encryptionService.DecryptData(userDTO.FirstName);
@@ -132,8 +143,9 @@ namespace Library.Application.Services
             userDTO.Gender = _encryptionService.DecryptData(userDTO.Gender);
             userDTO.Nationality = _encryptionService.DecryptData(userDTO.Nationality);
 
-
-            return userDTO;
+            response.Status = 200;
+            response.Result = userDTO;
+            return response;
         }
 
         public async Task<ApiResponse> AddBookToReadList(int bookId)
@@ -209,15 +221,24 @@ namespace Library.Application.Services
         }
 
 
-        public async Task<List<GetBookDTO>> GetMyReadList()
+        public async Task<ResponseDTO> GetMyReadList()
         {
+            var response = new ResponseDTO();
             var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
-                throw new Exception("User not authorized");
+            {
+                response.Message = "User not authorized";
+                return response;
+            }
+                
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                throw new Exception("User not found");
+            {
+                response.Message = "User not found";
+                return response;
+            }
+               
 
             
             await _userManager.Users.Include(u => u.Books).FirstOrDefaultAsync(u => u.Id == userId);
@@ -225,7 +246,12 @@ namespace Library.Application.Services
             var booksInReadList = user.Books;
 
             if (booksInReadList == null || booksInReadList.Count == 0)
-                return new List<GetBookDTO>();
+            {
+                response.Message = "No books in your readlist";
+                response.Result = new List<GetBookDTO>();
+                return response;
+            }
+               
 
             var booksDTO = _mapper.Map<List<GetBookDTO>>(booksInReadList);
             foreach(GetBookDTO books in booksDTO)
@@ -234,25 +260,38 @@ namespace Library.Application.Services
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
             }
-
-            return booksDTO;
+            response.Status = 200;
+            response.Result = booksDTO;
+            return response;
         }
-        public async Task<List<GetAuthorDTO>> GetMyFavouriteAuthors()
+        public async Task<ResponseDTO> GetMyFavouriteAuthors()
         {
+            var response = new ResponseDTO();
             var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
-                throw new Exception("User not authorized");
+            {
+                response.Message = "User not authorized";
+                return response;
+            }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                throw new Exception("User not found");
+            {
+                response.Message = "User not found";
+                return response;
+            }
 
             await _userManager.Users.Include(u => u.Authors).FirstOrDefaultAsync(u => u.Id == userId);
 
             var authorsInFavourites = user.Authors;
 
             if(authorsInFavourites == null || authorsInFavourites.Count == 0)
-                return new List<GetAuthorDTO>();
+            {
+                response.Message = "You do not have any authors in your favourites";
+                response.Result = new List<GetAuthorDTO>();
+                return response;
+            }
+                
 
             var authorsDTO = _mapper.Map<List<GetAuthorDTO>>(authorsInFavourites);
             foreach(GetAuthorDTO authors in authorsDTO)
@@ -262,7 +301,9 @@ namespace Library.Application.Services
                 authors.BioGraphy = _encryptionService.DecryptData(authors.BioGraphy);
                 authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
             }
-            return authorsDTO;
+            response.Status = 200;
+            response.Result = authorsDTO;
+            return response;
         }
 
         public async Task<ApiResponse> RemoveAuthorFromMyFavourites(int authorId)

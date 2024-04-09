@@ -93,6 +93,7 @@ namespace Library.Application.Services
 
             if (user.Books == null || !user.Books.Any())
             {
+                response.Message = "User does not have any books in their read list";
                 response.Result = new List<GetBookDTO>();
                 return response;
             }         
@@ -126,6 +127,7 @@ namespace Library.Application.Services
 
             if (user.Authors == null || !user.Authors.Any())
             {
+                response.Message = "User does not have any favourite authors";
                 response.Result = new List<GetAuthorDTO>();
                 return response;
             }
