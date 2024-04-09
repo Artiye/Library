@@ -1,5 +1,6 @@
 ﻿using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Responses;
 using Library.Domain.Entity;
 using System;
@@ -18,16 +19,16 @@ namespace Library.Application.Services.Interfaces
 
         Task<ApiResponse> DeleteBook(int id);
 
-        Task<GetBookDTO> GetBookById(int id);
+        Task<ResponseDTO> GetBookById(int id);
 
-        Task<GetBookDTO> GetBookByTitle(string title);
+        Task<ResponseDTO> GetBookByTitle(string title);
 
-        Task<List<GetBookDTO>> GetBooks();
+        Task<ResponseDTO> GetBooks();
 
-        Task<List<GetOnlyAuthorDTO>> GetAuthorOfABook(int bookId);
+        Task<ResponseDTO> GetAuthorOfABook(int bookId);
 
-        Task<List<GetBookDTO>> GetBooksByLanguage(string language);
+        Task<ResponseDTO> GetBooksByLanguage(string language);
 
-        Task<List<GetBookDTO>> GetBooksByGenre(string genre);
+        Task<ResponseDTO> GetBooksByGenre(string genre);
     }
 }
