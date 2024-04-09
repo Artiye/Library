@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.DTOs.AuthorDTOs;
 using Library.Application.DTOs.BookDTOs;
+using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Encryption;
 using Library.Application.RepositoryInterfaces;
 using Library.Application.Responses;
@@ -105,9 +106,15 @@ namespace Library.Application.Services
             return new ApiResponse(400, "Failed to edit");
         }
 
-        public async Task<List<GetAuthorDTO>> GetAllAuthors()
+        public async Task<ResponseDTO> GetAllAuthors()
         {
-            var author = await _authorRepository.GetAllAuthorList();            
+            var response = new ResponseDTO();
+            var author = await _authorRepository.GetAllAuthorList();   
+            if(author.Count == 0)
+            {
+                response.Message = "No authors found";
+                return response;
+            }
             var authorList = _mapper.Map<List<GetAuthorDTO>>(author);
             foreach(GetAuthorDTO author1 in authorList)
             {
@@ -125,18 +132,29 @@ namespace Library.Application.Services
                 }
             }
 
-            
-            return authorList;
+
+            response.Status = 200;
+            response.Result = authorList;
+            return response;
         }
 
-        public async Task<GetAuthorDTO> GetAuthorById(int id)
+        public async Task<ResponseDTO> GetAuthorById(int id)
         {
+            var response = new ResponseDTO();
             if (id == 0)
             {
-                throw new Exception("Author id cannot be 0");
+                response.Message = "Id cannot be 0";
+                return response;
             }
 
-            var author = await _authorRepository.GetAuthorById(id) ?? throw new Exception($"Author with id {id} does not exist");
+            var author = await _authorRepository.GetAuthorById(id);
+
+            if(author == null)
+            {
+                response.Message = $"Author with the id {id} does not exist";
+                return response;
+            }
+
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
             authorDTO.BioGraphy = _encryptionService.DecryptData(author.Biography);
             authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
@@ -149,17 +167,28 @@ namespace Library.Application.Services
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
             }
-            return authorDTO;
+            response.Status = 200;
+            response.Result = authorDTO;
+            return response;
         }
 
-        public async Task<GetAuthorDTO> GetAuthorByName(string name)
+        public async Task<ResponseDTO> GetAuthorByName(string name)
         {
+            var response = new ResponseDTO();
+
             var encryptedName = _encryptionService.EncryptData(name);
             if (encryptedName == null)
             {
-                throw new Exception("Name cannot be null");
+                response.Message = "Name cannot be null";
+                return response;
             }
-            var author = await _authorRepository.GetAuthorByName(encryptedName) ?? throw new Exception($"Author with that name {name} does not exist");
+            var author = await _authorRepository.GetAuthorByName(encryptedName);
+            if(author == null)
+            {
+                response.Message = $"Author with the name {name} does not exist";
+                return response;
+            }
+
             var authorDTO = _mapper.Map<GetAuthorDTO>(author);
             authorDTO.BioGraphy = _encryptionService.DecryptData(author.Biography);
             authorDTO.FullName = _encryptionService.DecryptData(author.FullName);
@@ -171,17 +200,29 @@ namespace Library.Application.Services
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
             }
-            return authorDTO;                          
+            response.Status = 200;
+            response.Result = authorDTO;
+            return response;
         }
 
-        public async Task<List<GetBookDTO>> GetBooksByAuthorId(int authorId)
+        public async Task<ResponseDTO> GetBooksByAuthorId(int authorId)
         {
+            var response = new ResponseDTO();   
             if (authorId == 0)
             {
-                throw new Exception("Author id cannot be 0");
+                response.Message = "Id cannot be 0";
+                return response;
             }
+            var author = await _authorRepository.GetAuthorById(authorId);
+            if(author == null)
+            {
+                response.Message = $"Author with the id {authorId} does not exist";
+                return response;
+            }
+
             var books = await _authorRepository.GetBooksByAuthorId(authorId);
-            foreach(GetBookDTO book in books)
+            
+            foreach (GetBookDTO book in books)
             {
                 book.Title = _encryptionService.DecryptData(book.Title);
                 book.Description = _encryptionService.DecryptData(book.Description);
@@ -195,7 +236,9 @@ namespace Library.Application.Services
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
             }
-            return books;
+            response.Status = 200;
+            response.Result = books;
+            return response;
         }
            
         
