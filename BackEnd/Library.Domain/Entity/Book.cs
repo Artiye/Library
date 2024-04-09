@@ -29,9 +29,11 @@ namespace Library.Domain.Entity
 
         public Languages Languages { get; set; }
 
-        public List<Author> Authors { get; set; }
+        public List<Author>? Authors { get; set; }
 
-        public List<BookClub> Clubs { get; set; }
+        public List<BookClub>? Clubs { get; set; }
+
+        public List<ApplicationUser>? Users { get; set; }
 
     }
 }

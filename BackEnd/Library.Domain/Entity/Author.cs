@@ -25,9 +25,11 @@ namespace Library.Domain.Entity
 
         public DateTime? DateOfDeath { get; set; }
 
-        public List<Book> Books { get; set; }
+        public List<Book>? Books { get; set; }
 
-        public List<BookClub> Clubs { get; set; }
+        public List<BookClub>? Clubs { get; set; }
+
+        public List<ApplicationUser>? Users { get; set; }
 
     }
     public class AuthorConfiguration : IEntityTypeConfiguration<Author>
