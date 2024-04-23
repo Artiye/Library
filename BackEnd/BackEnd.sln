@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Application", "Libr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Infrastructure", "Library.Infrastructure\Library.Infrastructure.csproj", "{D29BCDF3-BF3F-466B-8C04-55E51EFF8B4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Tests", "Library.Tests\Library.Tests.csproj", "{BDB2A25C-F2D7-480A-A786-107DB910AD13}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FE31C857-FCAC-4F95-B0E0-EE39CEC43E95} = {FE31C857-FCAC-4F95-B0E0-EE39CEC43E95}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +38,10 @@ Global
 		{D29BCDF3-BF3F-466B-8C04-55E51EFF8B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D29BCDF3-BF3F-466B-8C04-55E51EFF8B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D29BCDF3-BF3F-466B-8C04-55E51EFF8B4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDB2A25C-F2D7-480A-A786-107DB910AD13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDB2A25C-F2D7-480A-A786-107DB910AD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDB2A25C-F2D7-480A-A786-107DB910AD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDB2A25C-F2D7-480A-A786-107DB910AD13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
