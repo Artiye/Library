@@ -26,88 +26,122 @@ namespace Library.Application.Services
 
         public async Task<ApiResponse> AddAuthor(AddAuthorDTO dto)
         {
-            if (dto != null)
+            try
             {
-                if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.BioGraphy))
-                    return new ApiResponse(400, "Do not leave empty or null strings");
 
-                
-                var author = _mapper.Map<Author>(dto);
 
-                author.FullName = _encryptionService.EncryptData(dto.FullName);
-                author.Biography = _encryptionService.EncryptData(dto.BioGraphy);
-                author.Nationality = _encryptionService.EncryptData(dto.Nationality);
-                author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
+                if (dto != null)
+                {
+                    if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.BioGraphy))
+                        return new ApiResponse(400, "Do not leave empty or null strings");
 
-                await _authorRepository.AddAuthor(author);
-                return new ApiResponse(200, "Added author successfully");
 
+                    var author = _mapper.Map<Author>(dto);
+
+                    author.FullName = _encryptionService.EncryptData(dto.FullName);
+                    author.Biography = _encryptionService.EncryptData(dto.BioGraphy);
+                    author.Nationality = _encryptionService.EncryptData(dto.Nationality);
+                    author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
+
+                    await _authorRepository.AddAuthor(author);
+                    return new ApiResponse(200, "Added author successfully");
+
+                }
+                return new ApiResponse(400, "Failed to add author");
+            } 
+            catch (Exception)
+            {
+                return new ApiResponse(400, "Failed to add author");
             }
-            return new ApiResponse(400, "Failed to add author");
             }
 
        
         public async Task<ApiResponse> AddBookToAuthor(int authorId, int bookId)
         {
-            var author = await _authorRepository.GetAuthorById(authorId);
-
-
-            var book = await _bookRepository.GetBookById(bookId);
-            if(author != null && book != null)
+            try
             {
-                author.Books ??= new List<Book>();
-                if (author.Books.Any(b => b.BookId == bookId))
-                    return new ApiResponse(400, "The book you're trying to add already exists");
 
-                author.Books.Add(book);
-                await _authorRepository.EditAuthor(author);
-                return new ApiResponse(200, "Added book to author");
 
+                var author = await _authorRepository.GetAuthorById(authorId);
+
+
+                var book = await _bookRepository.GetBookById(bookId);
+                if (author != null && book != null)
+                {
+                    author.Books ??= new List<Book>();
+                    if (author.Books.Any(b => b.BookId == bookId))
+                        return new ApiResponse(400, "The book you're trying to add already exists");
+
+                    author.Books.Add(book);
+                    await _authorRepository.EditAuthor(author);
+                    return new ApiResponse(200, "Added book to author");
+
+                }
+                return new ApiResponse(400, "Failed to add book to author");
+            } catch (Exception)
+            {
+                return new ApiResponse(400, "Failed to add book to author");
             }
-            return new ApiResponse(400, "Failed book to author");
 
 
         }
 
         public async Task<ApiResponse> DeleteAuthor(int id)
         {
-            var author = await _authorRepository.GetAuthorById(id);
-            if (author != null)
+            try
             {
-                await _authorRepository.DeleteAuthor(author);
-                return new ApiResponse(200, "Deleted author");
+
+
+                var author = await _authorRepository.GetAuthorById(id);
+                if (author != null)
+                {
+                    await _authorRepository.DeleteAuthor(author);
+                    return new ApiResponse(200, "Deleted Author");
+                }
+                return new ApiResponse(400, "Failed to delete author");
+            } catch (Exception)
+            {
+                return new ApiResponse(400, "Failed to delete author");
             }
-            return new ApiResponse(400, "Failed to delete");
         }
 
         public async Task<ApiResponse> EditAuthor(EditAuthorDTO dto)
         {
-            var author = await _authorRepository.GetAuthorById(dto.AuthorId);
-            if(author != null)
+            try
             {
-                if (author.Biography == dto.Biography && 
-                    author.FullName == dto.FullName &&                   
-                    author.Nationality == dto.Nationality &&
-                    author.ProfileImage == dto.ProfileImage)
-                return new ApiResponse(400, "Nothing was edited");
 
-                if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.Biography))
-                    return new ApiResponse(400, "Do not leave empty or null strings");
 
-                author.Biography = _encryptionService.EncryptData(dto.Biography);
-                author.FullName = _encryptionService.EncryptData(dto.FullName);
-                author.Nationality = _encryptionService.EncryptData(dto.Nationality);               
-                author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
+                var author = await _authorRepository.GetAuthorById(dto.AuthorId);
+                if (author != null)
+                {
+                    if (author.Biography == dto.Biography &&
+                        author.FullName == dto.FullName &&
+                        author.Nationality == dto.Nationality &&
+                        author.ProfileImage == dto.ProfileImage)
+                        return new ApiResponse(400, "Nothing was edited");
 
-                await _authorRepository.EditAuthor(author);
-                return new ApiResponse(200, "Edited author successfully");
+                    if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.Biography))
+                        return new ApiResponse(400, "Do not leave empty or null strings");
 
+                    author.Biography = _encryptionService.EncryptData(dto.Biography);
+                    author.FullName = _encryptionService.EncryptData(dto.FullName);
+                    author.Nationality = _encryptionService.EncryptData(dto.Nationality);
+                    author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
+
+                    await _authorRepository.EditAuthor(author);
+                    return new ApiResponse(200, "Edited author successfully");
+
+                }
+                return new ApiResponse(400, "Failed to edit");
+            } catch (Exception)
+            {
+                return new ApiResponse(400, "Failed to edit");
             }
-            return new ApiResponse(400, "Failed to edit");
         }
 
         public async Task<ResponseDTO> GetAllAuthors()
         {
+
             var response = new ResponseDTO();
             var author = await _authorRepository.GetAllAuthorList();   
             if(author.Count == 0)
