@@ -13,7 +13,7 @@ public class PreventDuplicateLoginMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context, UserManager<ApplicationUser> userManager)
+    public async Task Invoke(HttpContext context)
     {
         var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId != null && context.Request.Path == "/login")

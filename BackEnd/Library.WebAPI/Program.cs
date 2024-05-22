@@ -1,3 +1,4 @@
+using Api.Middlewares;
 using Library.Application.DTOs.ResponseDTO;
 using Library.Application.Encryption;
 using Library.Application.Options;
@@ -12,9 +13,15 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
+
+
+
 
 // Add services to the container.
 
@@ -93,10 +100,11 @@ if (app.Environment.IsDevelopment())
 app.MapIdentityApi<ApplicationUser>();
 app.UseHttpsRedirection();
 
-
+app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<PreventDuplicateLoginMiddleware>();
+app.UseMiddleware<RequestContextLoggingMiddleware>();
 app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager,
     [FromBody] object empty) =>
 {
@@ -110,5 +118,6 @@ app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager,
 .WithOpenApi()
 .RequireAuthorization();
 app.MapControllers();
+
 
 app.Run();
