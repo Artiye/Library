@@ -9,6 +9,7 @@ using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,23 +18,26 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository, IEncryptionService encryptionService) : IAuthorService
+    public class AuthorService(IAuthorRepository authorRepository, IMapper mapper, IBookRepository bookRepository, IEncryptionService encryptionService, ILogger<AuthorService> logger) : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository = authorRepository;
         private readonly IMapper _mapper = mapper;
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly IEncryptionService _encryptionService = encryptionService;
+        private readonly ILogger<AuthorService> _logger = logger;
 
         public async Task<ApiResponse> AddAuthor(AddAuthorDTO dto)
         {
-            try
-            {
 
+           
 
                 if (dto != null)
                 {
                     if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.BioGraphy))
+                    {
+                        _logger.LogWarning("AddAuthor: Empty or null strings found in dto");
                         return new ApiResponse(400, "Do not leave empty or null strings");
+                    }
 
 
                     var author = _mapper.Map<Author>(dto);
@@ -44,52 +48,41 @@ namespace Library.Application.Services
                     author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
 
                     await _authorRepository.AddAuthor(author);
+                    _logger.LogInformation("AddAuthor: Author added successfully");
                     return new ApiResponse(200, "Added author successfully");
 
                 }
                 return new ApiResponse(400, "Failed to add author");
-            } 
-            catch (Exception)
-            {
-                return new ApiResponse(400, "Failed to add author");
             }
-            }
+           
+        
 
-       
+
         public async Task<ApiResponse> AddBookToAuthor(int authorId, int bookId)
         {
-            try
+
+            var author = await _authorRepository.GetAuthorById(authorId);
+
+
+            var book = await _bookRepository.GetBookById(bookId);
+            if (author != null && book != null)
             {
+                author.Books ??= new List<Book>();
+                if (author.Books.Any(b => b.BookId == bookId))
+                    return new ApiResponse(400, "The book you're trying to add already exists");
 
+                author.Books.Add(book);
+                await _authorRepository.EditAuthor(author);
+                return new ApiResponse(200, "Added book to author");
 
-                var author = await _authorRepository.GetAuthorById(authorId);
-
-
-                var book = await _bookRepository.GetBookById(bookId);
-                if (author != null && book != null)
-                {
-                    author.Books ??= new List<Book>();
-                    if (author.Books.Any(b => b.BookId == bookId))
-                        return new ApiResponse(400, "The book you're trying to add already exists");
-
-                    author.Books.Add(book);
-                    await _authorRepository.EditAuthor(author);
-                    return new ApiResponse(200, "Added book to author");
-
-                }
-                return new ApiResponse(400, "Failed to add book to author");
-            } catch (Exception)
-            {
-                return new ApiResponse(400, "Failed to add book to author");
             }
-
-
+            return new ApiResponse(400, "Failed to add book to author");
         }
+    
 
         public async Task<ApiResponse> DeleteAuthor(int id)
         {
-            try
-            {
+           
 
 
                 var author = await _authorRepository.GetAuthorById(id);
@@ -99,18 +92,12 @@ namespace Library.Application.Services
                     return new ApiResponse(200, "Deleted Author");
                 }
                 return new ApiResponse(400, "Failed to delete author");
-            } catch (Exception)
-            {
-                return new ApiResponse(400, "Failed to delete author");
-            }
+            
         }
 
         public async Task<ApiResponse> EditAuthor(EditAuthorDTO dto)
         {
-            try
-            {
-
-
+           
                 var author = await _authorRepository.GetAuthorById(dto.AuthorId);
                 if (author != null)
                 {
@@ -133,10 +120,7 @@ namespace Library.Application.Services
 
                 }
                 return new ApiResponse(400, "Failed to edit");
-            } catch (Exception)
-            {
-                return new ApiResponse(400, "Failed to edit");
-            }
+            
         }
 
         public async Task<ResponseDTO> GetAllAuthors()

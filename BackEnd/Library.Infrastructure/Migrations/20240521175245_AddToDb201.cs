@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDb214 : Migration
+    public partial class AddToDb201 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -408,7 +408,7 @@ namespace Library.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "Nationality", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminuser123412903847192311234", 0, "6143caf7-2a4f-4391-9a64-fa691709b97f", "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=", true, "u9AWyUnjf7jztE2k6G7bSA==", "pj2qf8wIy62RLNJ+1hXIKw==", "DlK7w9SeYV9y3UgPKw4VJg==", false, null, "/s7OzCfLH5QLPCm5zAaSlg==", "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEBKN83Ns5kEKuGZWzhHHGYyF55oNrLl1jask2qgPyXaRcvaF0+YsRZJgNJpj4f5bsQ==", null, false, "da298617-1671-40ec-89a0-914d9d2df7fb", false, "artinjobro@gmail.com" });
+                values: new object[] { "adminuser123412903847192311234", 0, "d6f1ef71-2f34-4117-8462-f36f1ee9e1ad", "fecH60FzDUB+uS+5y6I4Gt2eaBQmrnJxpbGOoODXAuI=", true, "u9AWyUnjf7jztE2k6G7bSA==", "pj2qf8wIy62RLNJ+1hXIKw==", "DlK7w9SeYV9y3UgPKw4VJg==", false, null, "/s7OzCfLH5QLPCm5zAaSlg==", "a2Z/Q7qRnLsUUHoKPLJNppRmTt/zVir+5v49jPsxcX0=", "ARTINJOBRO@GMAIL.COM", "AQAAAAIAAYagAAAAEIEPAUDRrDJB5R9gkc7CViuHDynzwsDYaIE8hvDT54Dpu0Mv8KiGvJ3HKIBR/ugTug==", null, false, "d46cc375-be62-46c9-9eaa-74bd02924bad", false, "artinjobro@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
