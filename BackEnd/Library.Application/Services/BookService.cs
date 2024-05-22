@@ -8,6 +8,7 @@ using Library.Application.Responses;
 using Library.Application.Services.Interfaces;
 using Library.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,13 @@ using System.Threading.Tasks;
 
 namespace Library.Application.Services
 {
-    public class BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository, IEncryptionService encryptionService) : IBookService
+    public class BookService(IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository, IEncryptionService encryptionService, ILogger<BookService> logger) : IBookService
     {
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly IMapper _mapper = mapper;
         private readonly IAuthorRepository _authorRepository = authorRepository;
         private readonly IEncryptionService _encryptionService = encryptionService;
+        private readonly ILogger<BookService> _logger = logger;
 
         public async Task<ApiResponse> AddBook(AddBookDTO dto)
         {
@@ -30,10 +32,14 @@ namespace Library.Application.Services
             {
                 if (string.IsNullOrEmpty(dto.Title) || string.IsNullOrEmpty(dto.Description) || string.IsNullOrEmpty(dto.CoverImage))
                 {
+                    _logger.LogWarning("AddBook: Title, Description and CoverImage must be filled in and not left blank or null");
                     return new ApiResponse(400, "Title, Description, and CoverImage are required");
                 }
                 if (dto.AuthorIds == null || !dto.AuthorIds.Any())
-                    return new ApiResponse(400, "At least one author is required");    
+                {
+                    _logger.LogWarning("AddBook: An author must be provided when adding a book");
+                    return new ApiResponse(400, "At least one author is required");
+                }
 
                 try
                 {
@@ -48,20 +54,23 @@ namespace Library.Application.Services
                         var author = await _authorRepository.GetAuthorById(authorId);
                         if (author == null)
                         {
+                            _logger.LogWarning("AddBook: Author with the provided id was not found");
                             return new ApiResponse(404, $"Author with ID {authorId} not found");
                         }
                         book.Authors.Add(author);
                     }
 
                     await _bookRepository.AddBook(book);
+                    _logger.LogInformation("AddBook: Book has been added successfully");
                     return new ApiResponse(200, "Added book successfully");
                 }
                 catch (Exception ex)
                 {
-                    return new ApiResponse(500, $"Failed to add book: {ex.Message}");
+                    _logger.LogError(ex, "AddBook: Failed to add book");
+                    return new ApiResponse(400, $"Failed to add book: {ex.Message}");
                 }
             }
-
+            _logger.LogError("AddBook: Failed to add book");
             return new ApiResponse(400, "Failed to add book");
         }
 
@@ -71,9 +80,11 @@ namespace Library.Application.Services
             var book = await _bookRepository.GetBookById(id);
             if (book != null)
             {
+                _logger.LogInformation("DeleteBook: Book deleted successfully");
                 await _bookRepository.DeleteBook(book);
                 return new ApiResponse(200, "Deleted Book");
             }
+            _logger.LogError("DeleteBook: Book failed to be deleted");
             return new ApiResponse(400, "Failed to delete");
         }
 
@@ -86,18 +97,26 @@ namespace Library.Application.Services
                 if (book.Title == dto.Title &&
                     book.Description == dto.Description &&
                     book.CoverImage == dto.CoverImage)
+                {
+                    _logger.LogWarning("EditBook: Nothing was edited");
                     return new ApiResponse(400, "Nothing changed");
+                }
 
                 if (string.IsNullOrEmpty(dto.Title) && string.IsNullOrEmpty(dto.Description) && string.IsNullOrEmpty(dto.CoverImage))
+                {
+                    _logger.LogWarning("EditBook: Inputs were left blank");
                     return new ApiResponse(400, "Don't leave inputs blank");
+                }
 
                 book.Title = _encryptionService.EncryptData(dto.Title);
                 book.Description = _encryptionService.EncryptData(dto.Description);
                 book.CoverImage = _encryptionService.EncryptData(dto.CoverImage);
 
                 await _bookRepository.EditBook(book);
+                _logger.LogInformation("EditBook: Book edited successfully");
                 return new ApiResponse(200, "Edited successfully");
             }
+            _logger.LogError("EditBook: Book has failed to be edited");
             return new ApiResponse(400, "Failed to edit");
         }
 
@@ -106,12 +125,14 @@ namespace Library.Application.Services
             var response = new ResponseDTO();
             if (bookId == 0)
             {
+                _logger.LogWarning("GetAuthorOfABook: Id provided cannot be 0");
                 response.Message = "Id cannot be 0";
                 return response;
             }
             var book = await _bookRepository.GetBookById(bookId);
             if(book == null)
             {
+                _logger.LogWarning("GetAuthorOfABook: Author with the book id provided does not exist");
                 response.Message = $"Author with the id {bookId} does not exist";
                 return response;
             }
@@ -123,6 +144,7 @@ namespace Library.Application.Services
                 author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                 author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
             }
+            _logger.LogInformation("GetAuthorOfABook: Author successfully retrieved");
             response.Status = 200;
             response.Result = authorDTO;
             return response;
@@ -135,12 +157,14 @@ namespace Library.Application.Services
             var response = new ResponseDTO();
             if (id == 0)
             {
+                _logger.LogWarning("GetBookById: Id provided cannot be 0");
                 response.Message = "id cannot be 0";
                 return response;
             }
             var book = await _bookRepository.GetBookById(id);
             if(book == null)
             {
+                _logger.LogWarning("GetBookById: Book with the provided id does not exist");
                 response.Message = $"Book with that id {id} does not exist";
                 return response;
             }
@@ -156,7 +180,7 @@ namespace Library.Application.Services
                     author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                     author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
                 }
-
+            _logger.LogInformation("GetBookById: Book successfully retrieved");
             response.Status = 200;
             response.Result = bookDTO;
             return response;
@@ -171,6 +195,7 @@ namespace Library.Application.Services
             var encryptedTitle = _encryptionService.EncryptData(title);
             if (encryptedTitle == null)
             {
+                _logger.LogWarning("GetBookByTitle: Title provided is null");
                 response.Message = "Title cannot be null";
                 return response;
             }
@@ -178,6 +203,7 @@ namespace Library.Application.Services
 
                 if(book == null)
             {
+                _logger.LogWarning("GetBookByTitle: Book with the title provided does not exist");
                 response.Message = $"Book with that title {title} does not exist";
                 return response;
             }
@@ -193,6 +219,7 @@ namespace Library.Application.Services
                 author1.Nationality = _encryptionService.DecryptData(author1.Nationality);
                 author1.ProfileImage = _encryptionService.DecryptData(author1.ProfileImage);
             }
+            _logger.LogInformation("GetBookByTitle: Book successfully retrieved");
             response.Status = 200;
             response.Result = bookDTO;
             return response;
@@ -207,6 +234,7 @@ namespace Library.Application.Services
             var book = await _bookRepository.GetAllBooks();
             if(book.Count == 0)
             {
+                _logger.LogWarning("GetBooks: No books found in the database");
                 response.Message = "No books found";
                 return response;
             }
@@ -225,8 +253,8 @@ namespace Library.Application.Services
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
             }
-           
 
+            _logger.LogInformation("GetBooks: Books successfully retrieved");
             response.Status = 200;
             response.Result = bookList;
             return response;
@@ -237,6 +265,7 @@ namespace Library.Application.Services
 
             if (language == null)
             {
+                _logger.LogWarning("GetBooksByLanguage: Language provided is null");
                 response.Message = "Language cannot be null";
                 return response;
             }
@@ -245,6 +274,7 @@ namespace Library.Application.Services
 
             if (book.Count == 0)
             {
+                _logger.LogWarning("GetBooksByLanguage: Books with the language provided do not exist");
                 response.Message = $"Books with language {language} do not exist";
                 return response;
             }
@@ -264,7 +294,7 @@ namespace Library.Application.Services
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
             }
-
+            _logger.LogInformation("GetBooksByLanguage: Books successfully retrieved");
             response.Status = 200;
             response.Result = bookList;
             return response;
@@ -275,6 +305,7 @@ namespace Library.Application.Services
 
             if (genre == null)
             {
+                _logger.LogWarning("GetBooksByGenre: Genre provided cannot be null");
                 response.Message = "Genre cannot be null";
                 return response;
             }
@@ -283,6 +314,7 @@ namespace Library.Application.Services
 
             if (book.Count == 0)
             {
+                _logger.LogWarning("GetBooksByGenre: Books with the genre provided do not exist");
                 response.Message = $"Books with that genre {genre} do not exist";
                 return response;
             }
@@ -302,6 +334,7 @@ namespace Library.Application.Services
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
             }
+            _logger.LogInformation("GetBooksByGenre: Books successfully retrieved");
             response.Status = 200;
             response.Result = bookList;
             return response;
