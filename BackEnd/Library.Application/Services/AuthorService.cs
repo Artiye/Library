@@ -27,12 +27,10 @@ namespace Library.Application.Services
         private readonly ILogger<AuthorService> _logger = logger;
 
         public async Task<ApiResponse> AddAuthor(AddAuthorDTO dto)
-        {
-
-           
-
+        {           
                 if (dto != null)
                 {
+                
                     if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.BioGraphy))
                     {
                         _logger.LogWarning("AddAuthor: Empty or null strings found in dto");
@@ -52,6 +50,7 @@ namespace Library.Application.Services
                     return new ApiResponse(200, "Added author successfully");
 
                 }
+            _logger.LogError("AddAuthor: Failed to add author ");
                 return new ApiResponse(400, "Failed to add author");
             }
            
@@ -69,28 +68,32 @@ namespace Library.Application.Services
             {
                 author.Books ??= new List<Book>();
                 if (author.Books.Any(b => b.BookId == bookId))
+                {
+                    _logger.LogWarning("AddBookToAuthor: Book already exists in the author's data");
                     return new ApiResponse(400, "The book you're trying to add already exists");
+                }
 
                 author.Books.Add(book);
                 await _authorRepository.EditAuthor(author);
+                _logger.LogInformation("AddBookToAuthor: Book added to author's data");
                 return new ApiResponse(200, "Added book to author");
 
             }
+            _logger.LogError("AddBookToAuthor: Failed to add book to author");
             return new ApiResponse(400, "Failed to add book to author");
         }
     
 
         public async Task<ApiResponse> DeleteAuthor(int id)
         {
-           
-
-
-                var author = await _authorRepository.GetAuthorById(id);
+              var author = await _authorRepository.GetAuthorById(id);
                 if (author != null)
                 {
+                _logger.LogInformation("DeleteAuthor: Author deleted successfully");
                     await _authorRepository.DeleteAuthor(author);
                     return new ApiResponse(200, "Deleted Author");
                 }
+               _logger.LogError("DeleteAuthor: Failed to delete author");
                 return new ApiResponse(400, "Failed to delete author");
             
         }
@@ -101,14 +104,20 @@ namespace Library.Application.Services
                 var author = await _authorRepository.GetAuthorById(dto.AuthorId);
                 if (author != null)
                 {
-                    if (author.Biography == dto.Biography &&
-                        author.FullName == dto.FullName &&
-                        author.Nationality == dto.Nationality &&
-                        author.ProfileImage == dto.ProfileImage)
-                        return new ApiResponse(400, "Nothing was edited");
+                if (author.Biography == dto.Biography &&
+                    author.FullName == dto.FullName &&
+                    author.Nationality == dto.Nationality &&
+                    author.ProfileImage == dto.ProfileImage)
+                {
+                    _logger.LogWarning("EditAuthor: Author edit had no changes");
+                    return new ApiResponse(400, "Nothing was edited");
+                }
 
-                    if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.Biography))
-                        return new ApiResponse(400, "Do not leave empty or null strings");
+                if (string.IsNullOrEmpty(dto.FullName) && string.IsNullOrEmpty(dto.Nationality) && string.IsNullOrEmpty(dto.Biography))
+                {
+                    _logger.LogWarning("EditAuthor: Empty or null strings found in dto ");
+                    return new ApiResponse(400, "Do not leave empty or null strings");
+                }
 
                     author.Biography = _encryptionService.EncryptData(dto.Biography);
                     author.FullName = _encryptionService.EncryptData(dto.FullName);
@@ -116,9 +125,11 @@ namespace Library.Application.Services
                     author.ProfileImage = _encryptionService.EncryptData(dto.ProfileImage);
 
                     await _authorRepository.EditAuthor(author);
+                _logger.LogInformation("EditAuthor: Author edited successfully");
                     return new ApiResponse(200, "Edited author successfully");
 
                 }
+            _logger.LogError("EditAuthor: Author failed to be edited");
                 return new ApiResponse(400, "Failed to edit");
             
         }
@@ -130,6 +141,7 @@ namespace Library.Application.Services
             var author = await _authorRepository.GetAllAuthorList();   
             if(author.Count == 0)
             {
+                _logger.LogWarning("GetAllAuthors: No authors found");
                 response.Message = "No authors found";
                 return response;
             }
@@ -150,7 +162,7 @@ namespace Library.Application.Services
                 }
             }
 
-
+            _logger.LogInformation("GetAllAuthors: Authors retrieved successfully");
             response.Status = 200;
             response.Result = authorList;
             return response;
@@ -161,6 +173,7 @@ namespace Library.Application.Services
             var response = new ResponseDTO();
             if (id == 0)
             {
+                _logger.LogWarning("GetAuthorById: Id provided is not valid");
                 response.Message = "Id cannot be 0";
                 return response;
             }
@@ -169,6 +182,7 @@ namespace Library.Application.Services
 
             if(author == null)
             {
+                _logger.LogWarning("GetAuthorById: Author with the id provided does not exist");
                 response.Message = $"Author with the id {id} does not exist";
                 return response;
             }
@@ -185,6 +199,7 @@ namespace Library.Application.Services
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
             }
+            _logger.LogInformation("GetAuthorById: Author retrieved successfully");
             response.Status = 200;
             response.Result = authorDTO;
             return response;
@@ -197,12 +212,14 @@ namespace Library.Application.Services
             var encryptedName = _encryptionService.EncryptData(name);
             if (encryptedName == null)
             {
+                _logger.LogWarning("GetAuthorByName: Name is null");
                 response.Message = "Name cannot be null";
                 return response;
             }
             var author = await _authorRepository.GetAuthorByName(encryptedName);
             if(author == null)
             {
+                _logger.LogWarning("GetAuthorByName: Author with the provided name has not been found");
                 response.Message = $"Author with the name {name} does not exist";
                 return response;
             }
@@ -218,6 +235,7 @@ namespace Library.Application.Services
                 books.Description = _encryptionService.DecryptData(books.Description);
                 books.CoverImage = _encryptionService.DecryptData(books.CoverImage);
             }
+            _logger.LogInformation("GetAuthorByName: Author retrieved successfully");
             response.Status = 200;
             response.Result = authorDTO;
             return response;
@@ -228,12 +246,14 @@ namespace Library.Application.Services
             var response = new ResponseDTO();   
             if (authorId == 0)
             {
+                _logger.LogWarning("GetBooksByAuthorId: Id provided cannot be 0");
                 response.Message = "Id cannot be 0";
                 return response;
             }
             var author = await _authorRepository.GetAuthorById(authorId);
             if(author == null)
             {
+                _logger.LogWarning("GetBooksByAuthorId: Author with the id provided does not exist");
                 response.Message = $"Author with the id {authorId} does not exist";
                 return response;
             }
@@ -254,6 +274,7 @@ namespace Library.Application.Services
                     authors.ProfileImage = _encryptionService.DecryptData(authors.ProfileImage);
                 }
             }
+            _logger.LogInformation("GetBooksByAuthorId: Author retrieved successfully");
             response.Status = 200;
             response.Result = books;
             return response;
@@ -272,9 +293,11 @@ namespace Library.Application.Services
 
                 author.Books.Remove(book);
                 await _authorRepository.EditAuthor(author);
+                _logger.LogInformation("RemoveBookFromAuthor: Book has been removed from author successfully");
                 return new ApiResponse(200, "Removed book from author");
 
             }
+            _logger.LogError("RemoveBookFromAuthor: Book has failed to removed from author");
             return new ApiResponse(400, "Failed  to remove book from author");
         }
     }
